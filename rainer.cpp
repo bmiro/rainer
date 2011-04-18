@@ -35,6 +35,7 @@ int main(int argc, char **argv) {
   
   while (robot3.isRunning()) {
     //Aqui va el vostre programa
+    robot3.move(1000.0);
   }
 
   robot3.stopRunning();
