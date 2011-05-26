@@ -13,8 +13,8 @@ wander:
 	g++ rainer3.o -o rainer3 -L/usr/local/Aria/lib/ -lrt -Llib -lAria -lpthread -ldl -Xlinker -Bstatic -lstdc++ -Xlinker -Bdynamic
 
 sim:
-	#xterm -hold -e "MobileSim -m /usr/local/Aria/maps/triangle.map" &
-	xterm -hold -e "MobileSim -nomap" &
+	xterm -hold -e "MobileSim -m /usr/local/Aria/maps/triangle.map" &
+	#xterm -hold -e "MobileSim -nomap" &
 	sleep 1
 	xterm -hold -e "./rainer"
 
