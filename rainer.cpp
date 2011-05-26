@@ -14,7 +14,7 @@ void anarPunt(ArRobot *rbt, Punt2D pnt) {
   double dx, dy, d;
   
   d = DBL_MAX;
-  while (d >= 5.0) {
+  while (d >= 100.0) {
     d = ArMath::distanceBetween(rbt->getX(), rbt->getY(), pnt.x, pnt.y);
     
     printf("%f\n", d);
@@ -40,7 +40,7 @@ int main(int argc, char **argv) {
   ArRobot robot3;
   //Declarar la tasca, dins dels constructor ja s'afegeig la tasca
   
-  Punt2D punts[] = {{0.0, 0.0}, {0.0, 100.0}, {100.0, 0.0}, {100.0, 100.0}};
+  Punt2D punts[] = {{0.0, 0.0}, {0.0, 1000.0}, {1000.0, 0.0}, {1000.0, 1000.0}};
 
   Aria::init();
   ArSimpleConnector connector(&argc, argv);
