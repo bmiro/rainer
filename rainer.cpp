@@ -17,7 +17,7 @@ using namespace std;
 #define DELIM ' '
 #define COMMENT '#'
 
-double sonarWeight [];
+double sonarWeight [8];
 double behaviorWeight [2];
 
 map<string, double> macro;
@@ -34,6 +34,7 @@ struct Vect2D {
 
 bool loadGlobalParams(string filename) {
   string line, id, value;
+  char key[MAX_PARAM_LINE];
   size_t pos;
   
   ifstream f (filename.c_str());
@@ -50,6 +51,12 @@ bool loadGlobalParams(string filename) {
     }
   }
   f.close();
+  
+  for (int i = macro["numFirstSensor"]; i < macro["numLastSensor"]; i++) {
+    snprintf(key, sizeof(key), "%s%d", "weightSonar", i);
+    sonarWeight[i] = macro[key];
+  }
+  
   return true;
 }
 
@@ -140,7 +147,7 @@ void anarPunt(ArRobot *rbt, Punt2D pnt) {
       rbt->setVel(0);
     }   
 
-    rbt->setVel(150);
+    rbt->setVel(macro["normalVel"]);
     ArUtil::sleep(macro["blindTime"]);
   }
 }
