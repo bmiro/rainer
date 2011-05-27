@@ -21,3 +21,5 @@ sim:
 kill:
 	killall -9 MobileSim
 
+clean:
+	rm *.o

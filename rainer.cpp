@@ -2,20 +2,25 @@
 
 #include "Aria.h"
 #include <stdio.h>
+#include <stdlib.h>
 #include <float.h>
+#include <map>
+#include <string>
+#include <fstream>
+#include <iostream>
 
-#define FRONT_SENS_NUM 8
+using namespace std;
 
-#define MAX_DIST 500.0
-#define TH_HEADING 90
-#define TH_ON_POINT 100.0
-#define T_BLIND 250
+#define FILE_PATH "config.cfg"
+#define MAX_PARAM_NAME 25
+#define MAX_PARAM_LINE 80
+#define DELIM ' '
+#define COMMENT '#'
 
-#define GO_GOAL 0
-#define AVOID_IMPACT 1
+double sonarWeight [];
+double behaviorWeight [2];
 
-double sonarWeight [] = {0.1, 0.1, 0.1, 0.2, 0.2, 0.1, 0.1, 0.1};
-double behaviorWeight [] = {0.3, 0.7};
+map<string, double> macro;
 
 struct Punt2D {
   double x;
@@ -27,26 +32,54 @@ struct Vect2D {
   double y;
 };
 
+bool loadGlobalParams(string filename) {
+  string line, id, value;
+  size_t pos;
+  
+  ifstream f (filename.c_str());
+  
+  if (!f.is_open()) return false;
+  
+  while (f.good()) {
+    getline(f, line);
+    if (!line.empty()) {
+      pos = line.find(" ");
+      id = line.substr(0, pos);
+      value = line.substr(pos);
+      macro[id] = strtod(value.c_str(), NULL);
+    }
+  }
+  f.close();
+  return true;
+}
 
-Vect2D repulsioObstacle(ArRobot *rbt, double th) {
+Vect2D repulsioObstacle(ArRobot *rbt, double th, double th_dmin , bool *impactAlert) {
   ArSensorReading *sensor;
   double vx, vy, vux, vuy, xObs, yObs, xRob, yRob, modV;
+  double d;
+  double dmin = DBL_MAX;
   Vect2D vr;
-  
+    
   vr.x = 0.0;
   vr.y = 0.0;
   
   xRob = rbt->getX();
   yRob = rbt->getY();
   
-  for (int i = 0; i < FRONT_SENS_NUM; i++) {
+  for (int i = macro["numFirstSensor"]; i < macro["numLastSensor"]; i++) {
     sensor = rbt->getSonarReading(i);
     xObs = sensor->getX();
     yObs = sensor->getY(); 
     vx = xObs - xRob; 
     vy = yObs - yRob;
-    modV = ArMath::distanceBetween(xRob, yRob, xObs, yObs);
-    if (modV < th) {
+    d = ArMath::distanceBetween(xRob, yRob, xObs, yObs);
+    
+    if (d < dmin) {
+      dmin = d;
+    }
+    
+    if (d < th) {
+      modV = (th - d) / th;
       /* Normalitzam el vector generat per aquest sensor */
       vux = vx / modV; //TODO alerta possible divisió per 0 que ha de ser controlada
       vux = vy / modV;
@@ -58,6 +91,8 @@ Vect2D repulsioObstacle(ArRobot *rbt, double th) {
   /* Feim que sigui un vector negatiu */
   vr.x *= -1;
   vr.y *= -1;
+
+  *impactAlert = (dmin < th_dmin);
 
   return vr;
 }
@@ -79,29 +114,34 @@ Vect2D atraccioObjectiu(ArRobot *rbt, Punt2D goal) {
 void anarPunt(ArRobot *rbt, Punt2D pnt) {
   double alpha;
   double d;
+  bool impactAlert;
   Vect2D vro, va, vd; /* Vector Repulsio Obstacle, Vector Atraccio objectiu, Vector Director */
   
   d = DBL_MAX;
-  while (d >= TH_ON_POINT) {
+  while (d >= macro["thOnPoint"]) {
     d = ArMath::distanceBetween(rbt->getX(), rbt->getY(), pnt.x, pnt.y);
         
+    vro = repulsioObstacle(rbt, macro["maxDist"], macro["impactDist"], &impactAlert);
     va = atraccioObjectiu(rbt, pnt);
     
-    vro = repulsioObstacle(rbt, MAX_DIST);
-
-    /* Recalculam el vector director del moviment del robot */
-    vd.x = behaviorWeight[GO_GOAL] * va.x + behaviorWeight[AVOID_IMPACT] * vro.x;
-    vd.y = behaviorWeight[GO_GOAL] * va.y + behaviorWeight[AVOID_IMPACT] * vro.y;
+    if (impactAlert) {
+      vd.x = vro.x;
+      vd.y = vro.y;
+    } else {
+      /* Recalculam el vector director del moviment del robot */
+      vd.x = macro["weightGoalAttraction"] * va.x + macro["weightObstacleRepulsion"] * vro.x;
+      vd.y = macro["weightGoalAttraction"] * va.y + macro["weightObstacleRepulsion"] * vro.y;
+    }
     
     alpha = ArMath::atan2(vd.y, vd.x);
         
     rbt->setHeading(alpha);
-    while (!rbt->isHeadingDone(TH_HEADING)) {
+    while (!rbt->isHeadingDone(macro["thHeading"])) {
       rbt->setVel(0);
     }   
 
     rbt->setVel(150);
-    ArUtil::sleep(T_BLIND);
+    ArUtil::sleep(macro["blindTime"]);
   }
 }
 
@@ -109,7 +149,17 @@ int main(int argc, char **argv) {
   ArRobot robot3;
   //Declarar la tasca, dins dels constructor ja s'afegeig la tasca
   
-  Punt2D punts[] = {{0.0, 0.0}, {0.0, 1000.0}, {1000.0, 0.0}, {1000.0, 1000.0}};
+  if (!loadGlobalParams(FILE_PATH)) {
+    printf("No s'han pogut carregar els paràmetres de configuració.\n");
+    return 1;
+  }
+  
+  map<string, double>::iterator curr,end;
+  for (curr = macro.begin(); curr != macro.end(); curr++) {
+      cout << (*curr).first << " " << (*curr).second << endl;
+  }
+
+  Punt2D punts[] = {{0.0, 0.0}, {0.0, 5000.0}, {5000.0, 0.0}, {5000.0, 5000.0}};
 
   Aria::init();
   ArSimpleConnector connector(&argc, argv);
