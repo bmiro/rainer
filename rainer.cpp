@@ -4,26 +4,42 @@
 #include <stdio.h>
 #include <float.h>
 
-#define TH_IMPACT 500.0
+#define FRONT_SENS_NUM 8
+
 #define MAX_DIST 500.0
 #define TH_HEADING 90
 #define TH_ON_POINT 100.0
 #define T_BLIND 250
 
+#define GO_GOAL 0
+#define AVOID_IMPACT 1
+
 double sonarWeight [] = {0.1, 0.1, 0.1, 0.2, 0.2, 0.1, 0.1, 0.1};
+double behaviorWeight [] = {0.3, 0.7};
 
 struct Punt2D {
   double x;
   double y;
 };
 
-void repulsioObstacle(ArRobot *rbt, double *x, double *y, double th) {
+struct Vect2D {
+  double x;
+  double y;
+};
+
+
+Vect2D repulsioObstacle(ArRobot *rbt, double th) {
   ArSensorReading *sensor;
-  double vx, vy, ax, ay, vux, vuy, xObs, yObs, xRob, yRob, modV;
+  double vx, vy, vux, vuy, xObs, yObs, xRob, yRob, modV;
+  Vect2D vr;
+  
+  vr.x = 0.0;
+  vr.y = 0.0;
+  
   xRob = rbt->getX();
   yRob = rbt->getY();
   
-  for (int i = 0; i < rbt->getNumSonar(); i++) {
+  for (int i = 0; i < FRONT_SENS_NUM; i++) {
     sensor = rbt->getSonarReading(i);
     xObs = sensor->getX();
     yObs = sensor->getY(); 
@@ -35,36 +51,50 @@ void repulsioObstacle(ArRobot *rbt, double *x, double *y, double th) {
       vux = vx / modV; //TODO alerta possible divisió per 0 que ha de ser controlada
       vux = vy / modV;
       /* Poderam i acumulam al vector de repulsió */
-      ax += sonarWeight[i] * vx;
-      ay += sonarWeight[i] * vy;
+      vr.x += sonarWeight[i] * vx;
+      vr.y += sonarWeight[i] * vy;
     }
   }
-  /* Restam vector de repulsió */
-  *x -= ax;
-  *y -= ay; 
+  /* Feim que sigui un vector negatiu */
+  vr.x *= -1;
+  vr.y *= -1;
+
+  return vr;
+}
+
+Vect2D atraccioObjectiu(ArRobot *rbt, Punt2D goal) {
+  double vx, vy, d;
+  Vect2D va; /* vector atracció */
+  
+  d = ArMath::distanceBetween(rbt->getX(), rbt->getY(), goal.x, goal.y);
+  vx = goal.x - rbt->getX();
+  vy = goal.y - rbt->getY();
+  
+  va.x = vx / d;
+  va.y = vy / d;
+  
+  return va;
 }
 
 void anarPunt(ArRobot *rbt, Punt2D pnt) {
   double alpha;
-  double vx, vy, d;
+  double d;
+  Vect2D vro, va, vd; /* Vector Repulsio Obstacle, Vector Atraccio objectiu, Vector Director */
   
   d = DBL_MAX;
   while (d >= TH_ON_POINT) {
     d = ArMath::distanceBetween(rbt->getX(), rbt->getY(), pnt.x, pnt.y);
+        
+    va = atraccioObjectiu(rbt, pnt);
     
-    printf("%f\n", d);
+    vro = repulsioObstacle(rbt, MAX_DIST);
+
+    /* Recalculam el vector director del moviment del robot */
+    vd.x = behaviorWeight[GO_GOAL] * va.x + behaviorWeight[AVOID_IMPACT] * vro.x;
+    vd.y = behaviorWeight[GO_GOAL] * va.y + behaviorWeight[AVOID_IMPACT] * vro.y;
     
-    /* Calculam el vector original */
-    vx = pnt.x - rbt->getX();
-    vy = pnt.y - rbt->getY();
-    
-    /* Recalculam el vector segons els obstacles */
-    repulsioObstacle(rbt, &vx, &vy, MAX_DIST);
-    
-    alpha = ArMath::atan2(vy, vx);
-    
-    printf("X: %f, Y: %f\n", rbt->getX(), rbt->getY());
-    
+    alpha = ArMath::atan2(vd.y, vd.x);
+        
     rbt->setHeading(alpha);
     while (!rbt->isHeadingDone(TH_HEADING)) {
       rbt->setVel(0);
