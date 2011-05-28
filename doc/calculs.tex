@@ -1,0 +1,32 @@
+\section{Càlculs}
+En aquest apartat explicam com ho fa el robot per calcular la direcció que a de
+seguir i com ho fa per evitar els obstacles. Existeixen diferents tècniques,
+però com indica l'enunciat em utilitzat comportaments reactius, més concretament
+els camps de potencial. 
+
+Un comportament és un mòdul que a partir d'una sèrie d'estimuls dóna una
+resposta determinada. Com em comentat aquests comportaments són reactius, per
+tant no es realitza cap tipus de planificació i només depen de les dades que es
+tenen en cada instant. 
+
+Existeixen diferents formes d'implementar els comportaments. A n'aquesta
+pràctica em utilitzat els camps de potencial. Els camps de potencial són un
+mètode que consisteix en modelitzar el robot com si fos una partícula sotmesa a
+forces. Cada comportament generara una força i la direcció del robot s'obtindrà
+a partir de la suma ponderada del resultat de cada comportament.
+
+Els comportaments que s'han implementat són el d'anar cap a un objectiu i el
+d'evitar obstacles. El primer produeix un vector d'atracció cap al punt
+objectiu. El segon, per cada sensor que detecta un objecte produeix un vector
+de repulsió. Llavors, aquets dos vectors es combinen i s'obté el vector
+resultant que ens indicarà la direcció a la qual s'ha de dirigir el robot. 
+
+\subsection{Càlcul vector d'atracció}
+
+\subsection{Càlcul vector de repulsió}
+
+\subsection{Càlcul vectro director} 
+
+
+
+
