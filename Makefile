@@ -1,11 +1,11 @@
 all: libs
 	g++ -c rainer.cpp -I/usr/local/Aria/include
-	g++ rainer.o libtactrainer.o -o rainer -L/usr/local/Aria/lib/ -fabi-version=1 -lrt -Llib -lAria -lpthread -ldl -Xlinker -Bstatic -lstdc++ -Xlinker -Bdynamic
+	g++ rainer.o librainer.o -o rainer -L/usr/local/Aria/lib/ -fabi-version=1 -lrt -Llib -lAria -lpthread -ldl -Xlinker -Bstatic -lstdc++ -Xlinker -Bdynamic
 
-libs: tact
+libs: lib
 
-tact:
-	g++ -c libtactrainer.cpp -I/usr/local/Aria/include
+lib:
+	g++ -c librainer.cpp -I/usr/local/Aria/include
 
 wander:
 	g++ -c wander.cpp -I/usr/local/Aria/include

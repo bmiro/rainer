@@ -9,7 +9,7 @@
 #include <fstream>
 #include <iostream>
 
-#include "libtactrainer.h"
+#include "librainer.h"
 
 map<string, double> param;
 
@@ -43,14 +43,14 @@ bool loadGlobalParams(string filename) {
     sonarWeight[i] = param[key];
   }
   
+  behaviorWeight[0] = param["weightGoalAttraction"];
+  behaviorWeight[1] = param["weightObstacleRepulsion"];
+  
   return true;
 }
 
 int main(int argc, char **argv) {
-  Rainer rainer;
-  //Declarar la tasca, dins dels constructor ja s'afegeig la tasca
-  
-  if (!rainer.loadGlobalParams(FILE_PATH)) {
+  if (!loadGlobalParams(FILE_PATH)) {
     printf("No s'han pogut carregar els paràmetres de configuració.\n");
     return 1;
   }
@@ -60,9 +60,13 @@ int main(int argc, char **argv) {
       cout << (*curr).first << " " << (*curr).second << endl;
   }
 
+  Rainer rainer(param["thHeading"], param["thOnPoint"], param["maxDist"], param["impactDist"],
+  param["blindTime"], param["numSonarFront"], param["numFirstSonar"], param["numLastSonar"],
+  param["normalVel"], sonarWeight, behaviorWeight);
+
   Punt2D punts[] = {{0.0, 0.0}, {0.0, 5000.0}, {5000.0, 0.0}, {5000.0, 5000.0}};
 
-  rainer.initArRobot();
+  rainer.initArRobot(&argc, argv);
   
   while (rainer.ar.isRunning()) {
     //Aqui va el vostre programa
@@ -72,7 +76,7 @@ int main(int argc, char **argv) {
       rainer.goGoal(punts[i]);
     }
   }
-  robot3.stopRunning();
+  rainer.ar.stopRunning();
   Aria::shutdown();
   return 0;
 }

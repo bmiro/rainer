@@ -1,3 +1,12 @@
+#ifndef LIBRAINER_H
+#define LIBRAINER_H
+
+#include "Aria.h"
+#include "common_rainer.h"
+
+#define BH_GOAL 0
+#define BH_OBSTACLE 1
+
 class Rainer {
 private:
   double thHeading;
@@ -7,29 +16,45 @@ private:
   
   double blindTime;
   
-  int numSensFront;
-  int numFirstSensro;
-  int numLastSensor;
+  int numSonarFront;
+  int numFirstSonar;
+  int numLastSonar;
   
   double normalVel;
   
-  double sonarWeight[];
-  double behaviourWeight[];
+  double *sonarWeight;
+  double *behaviourWeight;
+  
+  Rainer() { };
   
 public:
-  double getThHeading();
-  double thOnPoint();
-  double maxDist();
-  double impactDist();
+  ArRobot ar; /* Robot de l'aria */
   
-  double blindTime();
+  Rainer(double pthHeading, double pthOnPoint, double pmaxDist, double pimpactDist,
+  double pblindTime, int pnumSonarFront, int pnumFirstSonar, int pnumLastSonar,
+  double pnormalVel, double *psonarWeight, double *pbehaviourWeight);
   
-  int numSensFront();
-  int numFirstSonar();
-  int numLastSonar();
+  int initArRobot(int *argc, char **argv);
   
-  double normalVel();
+  double getThHeading() {return thHeading;}
+  double getThOnPoint() {return thOnPoint;}
+  double getMaxDist() {return maxDist;}
+  double getImpactDist() {return impactDist;}
   
-  double getSonarWeight(int s);
-  double getBehaviorWeight(int behaviour);
-}
+  double getBlindTime() {return blindTime;}
+  
+  int getNumSonarFront() {return numSonarFront;}
+  int getNumFirstSonar() {return numFirstSonar;}
+  int getNumLastSonar() {return numLastSonar;}
+  
+  double getNormalVel() {return normalVel;}
+  
+  double getSonarWeight(int s) {return sonarWeight[s];}
+  double getBehaviorWeight(int behaviour) {return sonarWeight[behaviour];}
+  
+  Vect2D goalAttraction(Punt2D goal);
+  Vect2D obstacleRepulsion(double th, double th_dmin, bool *impactAlert);
+  double goGoal(Punt2D pnt);
+   
+};
+#endif
