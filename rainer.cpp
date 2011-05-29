@@ -47,10 +47,10 @@ bool loadGlobalParams(string filename) {
 }
 
 int main(int argc, char **argv) {
-  ArRobot robot3;
+  Rainer rainer;
   //Declarar la tasca, dins dels constructor ja s'afegeig la tasca
   
-  if (!loadGlobalParams(FILE_PATH)) {
+  if (!rainer.loadGlobalParams(FILE_PATH)) {
     printf("No s'han pogut carregar els paràmetres de configuració.\n");
     return 1;
   }
@@ -62,26 +62,14 @@ int main(int argc, char **argv) {
 
   Punt2D punts[] = {{0.0, 0.0}, {0.0, 5000.0}, {5000.0, 0.0}, {5000.0, 5000.0}};
 
-  Aria::init();
-  ArSimpleConnector connector(&argc, argv);
-  if (!connector.parseArgs() || argc > 1) {
-    connector.logOptions();
-    exit(1);
-  }
-  if (!connector.connectRobot(&robot3)) {
-    printf("Could not connect to robot... exiting\n");
-    Aria::shutdown();
-    return 1;
-  }
-  robot3.comInt(ArCommands::SOUNDTOG, 1);
-  robot3.comInt(ArCommands::ENABLE, 1); //Habilitar els motors
-  robot3.runAsync(false);
-  while (robot3.isRunning()) {
+  rainer.initArRobot();
+  
+  while (rainer.ar.isRunning()) {
     //Aqui va el vostre programa
     for (int i = 0; i < 4 /*punts.Length*/; i++) {
       printf("Vaig al punt %d\n", i);
-      printf("X: %f, Y: %f\n\n", robot3.getX(), robot3.getY());
-      goGoal(&robot3, param, sonarWeight, punts[i]);
+      printf("X: %f, Y: %f\n\n", rainer.ar.getX(), rainer.ar.getY());
+      rainer.goGoal(punts[i]);
     }
   }
   robot3.stopRunning();
