@@ -2,7 +2,7 @@
 
 Rainer::Rainer(double pthHeading, double pthOnPoint, double pmaxDist, double pimpactDist,
   double pblindTime, double pnumSonarFront, double pnumFirstSonar, double pnumLastSonar,
-  double pnormalVel, double *psonarWeight, double *pbehaviourWeight) {
+  double pslowVel, double pnormalVel, double *psonarWeight, double *pbehaviourWeight) {
   
   thHeading = pthHeading;
   thOnPoint = pthOnPoint;
@@ -16,6 +16,7 @@ Rainer::Rainer(double pthHeading, double pthOnPoint, double pmaxDist, double pim
   numLastSonar = pnumLastSonar;
   
   normalVel = pnormalVel;
+	slowVel = pslowVel;
   
   sonarWeight = (double *)malloc(pnumSonarFront*sizeof(double));
   behaviourWeight = (double *)malloc(2*sizeof(double));
@@ -99,9 +100,66 @@ Vect2D Rainer::obstacleRepulsion(double th, double th_dmin, bool *impactAlert) {
   return vr;
 }
 
+/* Fa que el robot es mogui fins que es troba a una distancia menor de th. */
+int Rainer::findObject(ArRobot *rbt, double vel, double th) {
+	ArSensorReading *sensor;	
+	double xRob, yRob, xObs, yObs, d;
+	
+	rbt->setVel(vel); 
+  
+	while (1) {
+		xRob = rbt->getX();
+	  yRob = rbt->getY(); 
+	 	for (int i = numFirstSonar; i < numLastSonar; i++) {
+    	sensor = rbt->getSonarReading(i);
+   		xObs = sensor->getX();
+    	yObs = sensor->getY(); 
+    	d = ArMath::distanceBetween(xRob, yRob, xObs, yObs);
+			if (d < th) {
+				rbt->setVel(0); 
+  			return 1;
+			}
+		}
+	}	
+}
+
+/* El robot es mou fins trobar un objecte. Llavors calcula el vector de 
+repulsió per tal d'esquivar l'objecte. Es robot es mou per l'entorn fins 
+que es pitja la tecla Esc */
+void Rainer::wander(ArRobot *rbt) {
+	double vel, th, th_dmin, alpha;
+	ArKeyHandler keyHandler;
+	bool impactAlert;	
+	Vect2D vro;
+
+	Aria::setKeyHandler(&keyHandler);
+	rbt->attachKeyHandler(&keyHandler);
+
+	vel = normalVel;
+	th = maxDist;
+	th_dmin = impactDist;
+
+	alpha = 0.0;	
+
+	while (1) {
+		//Avançam fins a trobar un objecte
+		findObject(rbt, vel, th);  
+
+		//Calculam el vector de repulsió i l'angle de gir
+		vro = obstacleRepulsion(th, th_dmin, &impactAlert);
+		alpha = ArMath::atan2(vro.y, vro.x);
+
+		//Orientam el robot cap a la direcció que ha de seguir		
+		rbt->setHeading(alpha);
+		while (!rbt->isHeadingDone(thHeading)) {
+			rbt->setVel(0);
+		}  	
+	}
+}
+
 /* Retorna distancia a que s'ha quedat del punt */
 double Rainer::goGoal(Punt2D pnt) {
-  double alpha;
+  double alpha, vel;
   double d;
   bool impactAlert;
   Vect2D vro, va, vd; /* Vector Repulsio Obstacle, Vector Atraccio objectiu, Vector Director */
@@ -121,10 +179,12 @@ double Rainer::goGoal(Punt2D pnt) {
       /* Col.lisió imminent, sols tenim amb compte el vector de repulsió*/
       vd.x = vro.x;
       vd.y = vro.y;
+			vel = slowVel;
     } else {
       /* Recalculam el vector director del moviment del robot */
       vd.x = behaviourWeight[BH_GOAL] * va.x + behaviourWeight[BH_OBSTACLE] * vro.x;
       vd.y = behaviourWeight[BH_GOAL] * va.y + behaviourWeight[BH_OBSTACLE] * vro.y;
+			vel = normalVel;
     }
     
     alpha = ArMath::atan2(vd.y, vd.x);
@@ -134,7 +194,7 @@ double Rainer::goGoal(Punt2D pnt) {
       ar.setVel(0);
     }   
 
-    ar.setVel(normalVel);
+    ar.setVel(vel);
     ArUtil::sleep(blindTime);
   }
   return ArMath::distanceBetween(ar.getX(), ar.getY(), pnt.x, pnt.y);

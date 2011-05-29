@@ -65,7 +65,7 @@ int main(int argc, char **argv) {
 
   Rainer rainer(param["thHeading"], param["thOnPoint"], param["maxDist"], param["impactDist"],
   param["blindTime"], param["numSonarFront"], param["numFirstSonar"], param["numLastSonar"],
-  param["normalVel"], sonarWeight, behaviorWeight);
+  param["slowVel"], param["normalVel"], sonarWeight, behaviorWeight);
 
   Punt2D punts[] = {{0.0, 0.0}, {0.0, 5000.0}, {5000.0, 0.0}, {5000.0, 5000.0}};
 

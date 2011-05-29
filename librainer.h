@@ -20,6 +20,7 @@ private:
   double numFirstSonar;
   double numLastSonar;
   
+	double slowVel;
   double normalVel;
   
   double *sonarWeight;
@@ -32,7 +33,7 @@ public:
   
   Rainer(double pthHeading, double pthOnPoint, double pmaxDist, double pimpactDist,
   double pblindTime, double pnumSonarFront, double pnumFirstSonar, double pnumLastSonar,
-  double pnormalVel, double *psonarWeight, double *pbehaviourWeight);
+  double pslowVel, double pnormalVel, double *psonarWeight, double *pbehaviourWeight);
   
   int initArRobot(int *argc, char **argv);
   
@@ -54,6 +55,8 @@ public:
   
   Vect2D goalAttraction(Punt2D goal);
   Vect2D obstacleRepulsion(double th, double th_dmin, bool *impactAlert);
+	int findObject(ArRobot *rbt, double vel, double th); 
+	void wander(ArRobot *rbt);
   double goGoal(Punt2D pnt);
    
 };
