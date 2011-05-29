@@ -76,6 +76,10 @@
 \def\PYZob{\char`\{}
 \def\PYZcb{\char`\}}
 \def\PYZca{\char`\^}
+\def\PYZsh{\char`\#}
+\def\PYZpc{\char`\%}
+\def\PYZdl{\char`\$}
+\def\PYZti{\char`\~}
 % for compatibility with earlier versions
 \def\PYZat{@}
 \def\PYZlb{[}

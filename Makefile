@@ -1,6 +1,11 @@
-all:
+all: libs
 	g++ -c rainer.cpp -I/usr/local/Aria/include
-	g++ rainer.o -o rainer -L/usr/local/Aria/lib/ -fabi-version=1 -lrt -Llib -lAria -lpthread -ldl -Xlinker -Bstatic -lstdc++ -Xlinker -Bdynamic
+	g++ rainer.o libtactrainer.o -o rainer -L/usr/local/Aria/lib/ -fabi-version=1 -lrt -Llib -lAria -lpthread -ldl -Xlinker -Bstatic -lstdc++ -Xlinker -Bdynamic
+
+libs: tact
+
+tact:
+	g++ -c libtactrainer.cpp -I/usr/local/Aria/include
 
 wander:
 	g++ -c wander.cpp -I/usr/local/Aria/include
@@ -13,7 +18,8 @@ wander:
 	g++ rainer3.o -o rainer3 -L/usr/local/Aria/lib/ -lrt -Llib -lAria -lpthread -ldl -Xlinker -Bstatic -lstdc++ -Xlinker -Bdynamic
 
 sim:
-	xterm -hold -e "MobileSim -m /usr/local/Aria/maps/triangle.map" &
+	#xterm -hold -e "MobileSim -m /usr/local/Aria/maps/triangle.map" &
+	xterm -hold -e "MobileSim -m ./maps/quatrepunobs.map" &
 	#xterm -hold -e "MobileSim -nomap" &
 	sleep 1
 	xterm -hold -e "./rainer"

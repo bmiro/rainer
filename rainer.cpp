@@ -9,28 +9,14 @@
 #include <fstream>
 #include <iostream>
 
+#include "libtactrainer.h"
+
+map<string, double> param;
+
 using namespace std;
 
-#define FILE_PATH "config.cfg"
-#define MAX_PARAM_NAME 25
-#define MAX_PARAM_LINE 80
-#define DELIM ' '
-#define COMMENT '#'
-
-double sonarWeight [8];
-double behaviorWeight [2];
-
-map<string, double> macro;
-
-struct Punt2D {
-  double x;
-  double y;
-};
-
-struct Vect2D {
-  double x;
-  double y;
-};
+double sonarWeight [N_FRONT_SONARS];
+double behaviorWeight [BEHAVIOR_FATORS];
 
 bool loadGlobalParams(string filename) {
   string line, id, value;
@@ -47,109 +33,17 @@ bool loadGlobalParams(string filename) {
       pos = line.find(" ");
       id = line.substr(0, pos);
       value = line.substr(pos);
-      macro[id] = strtod(value.c_str(), NULL);
+      param[id] = strtod(value.c_str(), NULL);
     }
   }
   f.close();
   
-  for (int i = macro["numFirstSensor"]; i < macro["numLastSensor"]; i++) {
+  for (int i = param["numFirstSensor"]; i < param["numLastSensor"]; i++) {
     snprintf(key, sizeof(key), "%s%d", "weightSonar", i);
-    sonarWeight[i] = macro[key];
+    sonarWeight[i] = param[key];
   }
   
   return true;
-}
-
-Vect2D repulsioObstacle(ArRobot *rbt, double th, double th_dmin , bool *impactAlert) {
-  ArSensorReading *sensor;
-  double vx, vy, vux, vuy, xObs, yObs, xRob, yRob, modV;
-  double d;
-  double dmin = DBL_MAX;
-  Vect2D vr;
-    
-  vr.x = 0.0;
-  vr.y = 0.0;
-  
-  xRob = rbt->getX();
-  yRob = rbt->getY();
-  
-  for (int i = macro["numFirstSensor"]; i < macro["numLastSensor"]; i++) {
-    sensor = rbt->getSonarReading(i);
-    xObs = sensor->getX();
-    yObs = sensor->getY(); 
-    vx = xObs - xRob; 
-    vy = yObs - yRob;
-    d = ArMath::distanceBetween(xRob, yRob, xObs, yObs);
-    
-    if (d < dmin) {
-      dmin = d;
-    }
-    
-    if (d < th) {
-      modV = (th - d) / th;
-      /* Normalitzam el vector generat per aquest sensor */
-      vux = vx / modV; //TODO alerta possible divisió per 0 que ha de ser controlada
-      vux = vy / modV;
-      /* Poderam i acumulam al vector de repulsió */
-      vr.x += sonarWeight[i] * vx;
-      vr.y += sonarWeight[i] * vy;
-    }
-  }
-  /* Feim que sigui un vector negatiu */
-  vr.x *= -1;
-  vr.y *= -1;
-
-  *impactAlert = (dmin < th_dmin);
-
-  return vr;
-}
-
-Vect2D atraccioObjectiu(ArRobot *rbt, Punt2D goal) {
-  double vx, vy, d;
-  Vect2D va; /* vector atracció */
-  
-  d = ArMath::distanceBetween(rbt->getX(), rbt->getY(), goal.x, goal.y);
-  vx = goal.x - rbt->getX();
-  vy = goal.y - rbt->getY();
-  
-  va.x = vx / d;
-  va.y = vy / d;
-  
-  return va;
-}
-
-void anarPunt(ArRobot *rbt, Punt2D pnt) {
-  double alpha;
-  double d;
-  bool impactAlert;
-  Vect2D vro, va, vd; /* Vector Repulsio Obstacle, Vector Atraccio objectiu, Vector Director */
-  
-  d = DBL_MAX;
-  while (d >= macro["thOnPoint"]) {
-    d = ArMath::distanceBetween(rbt->getX(), rbt->getY(), pnt.x, pnt.y);
-        
-    vro = repulsioObstacle(rbt, macro["maxDist"], macro["impactDist"], &impactAlert);
-    va = atraccioObjectiu(rbt, pnt);
-    
-    if (impactAlert) {
-      vd.x = vro.x;
-      vd.y = vro.y;
-    } else {
-      /* Recalculam el vector director del moviment del robot */
-      vd.x = macro["weightGoalAttraction"] * va.x + macro["weightObstacleRepulsion"] * vro.x;
-      vd.y = macro["weightGoalAttraction"] * va.y + macro["weightObstacleRepulsion"] * vro.y;
-    }
-    
-    alpha = ArMath::atan2(vd.y, vd.x);
-        
-    rbt->setHeading(alpha);
-    while (!rbt->isHeadingDone(macro["thHeading"])) {
-      rbt->setVel(0);
-    }   
-
-    rbt->setVel(macro["normalVel"]);
-    ArUtil::sleep(macro["blindTime"]);
-  }
 }
 
 int main(int argc, char **argv) {
@@ -162,7 +56,7 @@ int main(int argc, char **argv) {
   }
   
   map<string, double>::iterator curr,end;
-  for (curr = macro.begin(); curr != macro.end(); curr++) {
+  for (curr = param.begin(); curr != param.end(); curr++) {
       cout << (*curr).first << " " << (*curr).second << endl;
   }
 
@@ -187,7 +81,7 @@ int main(int argc, char **argv) {
     for (int i = 0; i < 4 /*punts.Length*/; i++) {
       printf("Vaig al punt %d\n", i);
       printf("X: %f, Y: %f\n\n", robot3.getX(), robot3.getY());
-      anarPunt(&robot3, punts[i]);
+      goGoal(&robot3, param, sonarWeight, punts[i]);
     }
   }
   robot3.stopRunning();
