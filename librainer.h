@@ -16,9 +16,9 @@ private:
   
   double blindTime;
   
-  int numSonarFront;
-  int numFirstSonar;
-  int numLastSonar;
+  double numSonarFront;
+  double numFirstSonar;
+  double numLastSonar;
   
   double normalVel;
   
@@ -31,7 +31,7 @@ public:
   ArRobot ar; /* Robot de l'aria */
   
   Rainer(double pthHeading, double pthOnPoint, double pmaxDist, double pimpactDist,
-  double pblindTime, int pnumSonarFront, int pnumFirstSonar, int pnumLastSonar,
+  double pblindTime, double pnumSonarFront, double pnumFirstSonar, double pnumLastSonar,
   double pnormalVel, double *psonarWeight, double *pbehaviourWeight);
   
   int initArRobot(int *argc, char **argv);

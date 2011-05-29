@@ -1,7 +1,7 @@
 #include "librainer.h"
 
 Rainer::Rainer(double pthHeading, double pthOnPoint, double pmaxDist, double pimpactDist,
-  double pblindTime, int pnumSonarFront, int pnumFirstSonar, int pnumLastSonar,
+  double pblindTime, double pnumSonarFront, double pnumFirstSonar, double pnumLastSonar,
   double pnormalVel, double *psonarWeight, double *pbehaviourWeight) {
   
   thHeading = pthHeading;
@@ -105,6 +105,10 @@ double Rainer::goGoal(Punt2D pnt) {
   double d;
   bool impactAlert;
   Vect2D vro, va, vd; /* Vector Repulsio Obstacle, Vector Atraccio objectiu, Vector Director */
+  
+  printf("%f \n %f \n %f \n %f \n %f \n %f \n %f \n %f \n %f \n ", thHeading, thOnPoint, maxDist, impactDist, blindTime
+  , numSonarFront, numFirstSonar, numLastSonar, normalVel);
+  
   
   d = DBL_MAX;
   while (d >= thOnPoint) {
