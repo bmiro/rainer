@@ -38,7 +38,7 @@ bool loadGlobalParams(string filename) {
   }
   f.close();
   
-  for (int i = param["numFirstSensor"]; i < param["numLastSensor"]; i++) {
+  for (int i = param["numFirstSonar"]; i < param["numLastSonar"]; i++) {
     snprintf(key, sizeof(key), "%s%d", "weightSonar", i);
     sonarWeight[i] = param[key];
   }

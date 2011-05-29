@@ -15,7 +15,7 @@ Rainer::Rainer(double pthHeading, double pthOnPoint, double pmaxDist, double pim
   numFirstSonar = pnumFirstSonar;
   numLastSonar = pnumLastSonar;
   
-  normalVel = normalVel;
+  normalVel = pnormalVel;
   
   sonarWeight = (double *)malloc(pnumSonarFront*sizeof(double));
   behaviourWeight = (double *)malloc(2*sizeof(double));
