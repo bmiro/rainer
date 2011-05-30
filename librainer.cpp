@@ -176,7 +176,9 @@ bool Rainer::goGoal(Point2D pnt) {
   canAccess = true;
   while ((d >= thOnPoint) and canAccess) {
     d = ArMath::distanceBetween(ar.getX(), ar.getY(), pnt.x, pnt.y);
-        
+    
+    printf("GoGoal: %f-%f\n", ar.getX(), ar.getY());
+    
     vro = obstacleRepulsion(maxDist, impactDist, &impactAlert);
     va = goalAttraction(pnt);
     
@@ -226,7 +228,7 @@ void Rainer::cleanArea() {
   while (!mp.isClean()) {
     c = mp.getNextPos(CLEAN);
     p = mp.getRealXY(c);
-    printf("\n%f-%f\n", p.x, p.y);
+    printf("\nVaig al punt real: %f-%f\n", p.x, p.y);
     goGoal(p);
     mp.mark(c, CLEAN);
     mp.setRobotPos(c);
