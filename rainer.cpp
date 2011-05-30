@@ -10,7 +10,6 @@
 #include <iostream>
 
 #include "librainer.h"
-#include "map.h"
 
 map<string, double> param;
 
@@ -66,7 +65,7 @@ int main(int argc, char **argv) {
   param["blindTime"], param["numSonarFront"], param["numFirstSonar"], param["numLastSonar"],
   param["slowVel"], param["normalVel"], sonarWeight, behaviorWeight);
 
-  Punt2D punts[] = {{0.0, 0.0}, {0.0, 5000.0}, {5000.0, 0.0}, {5000.0, 5000.0}};
+  Point2D punts[] = {{0.0, 0.0}, {0.0, 5000.0}, {5000.0, 0.0}, {5000.0, 5000.0}};
 
   rainer.initArRobot(&argc, argv);
   while (rainer.ar.isRunning()) {

@@ -53,11 +53,11 @@ public:
   double getSonarWeight(int s) {return sonarWeight[s];}
   double getBehaviorWeight(int behaviour) {return sonarWeight[behaviour];}
   
-  Vect2D goalAttraction(Punt2D goal);
+  Vect2D goalAttraction(Point2D goal);
   Vect2D obstacleRepulsion(double th, double th_dmin, bool *impactAlert);
-	int findObject(ArRobot *rbt, double vel, double th); 
-	void wander(ArRobot *rbt);
-  double goGoal(Punt2D pnt);
+	int findObject(double vel, double th); 
+	void wander();
+  double goGoal(Point2D pnt);
    
 };
 #endif

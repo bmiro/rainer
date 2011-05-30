@@ -42,7 +42,7 @@ int Rainer::initArRobot(int *argc, char **argv) {
   ar.runAsync(false);
 }
 
-Vect2D Rainer::goalAttraction(Punt2D goal) {
+Vect2D Rainer::goalAttraction(Point2D goal) {
     double vx, vy, d;
     Vect2D va; /* vector atracció */
     
@@ -108,8 +108,8 @@ int Rainer::findObject(double vel, double th) {
 	ar.setVel(vel); 
   
 	while (1) {
-		xRob = rbt->getX();
-	  yRob = rbt->getY(); 
+		xRob = ar.getX();
+	  yRob = ar.getY(); 
 	 	for (int i = numFirstSonar; i < numLastSonar; i++) {
     	sensor = ar.getSonarReading(i);
    		xObs = sensor->getX();
@@ -126,7 +126,7 @@ int Rainer::findObject(double vel, double th) {
 /* El robot es mou fins trobar un objecte. Llavors calcula el vector de 
 repulsió per tal d'esquivar l'objecte. Es robot es mou per l'entorn fins 
 que es pitja la tecla Esc */
-void Rainer::wander(ArRobot *rbt) {
+void Rainer::wander() {
 	double vel, th, th_dmin, alpha;
 	ArKeyHandler keyHandler;
 	bool impactAlert;	
@@ -143,7 +143,7 @@ void Rainer::wander(ArRobot *rbt) {
 
 	while (1) {
 		//Avançam fins a trobar un objecte
-		findObject(rbt, vel, th);  
+		findObject(vel, th);  
 
 		//Calculam el vector de repulsió i l'angle de gir
 		vro = obstacleRepulsion(th, th_dmin, &impactAlert);
@@ -158,7 +158,7 @@ void Rainer::wander(ArRobot *rbt) {
 }
 
 /* Retorna distancia a que s'ha quedat del punt */
-double Rainer::goGoal(Punt2D pnt) {
+double Rainer::goGoal(Point2D pnt) {
   double alpha, vel;
   double d;
   bool impactAlert;
