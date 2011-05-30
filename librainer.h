@@ -57,7 +57,7 @@ public:
   Vect2D obstacleRepulsion(double th, double th_dmin, bool *impactAlert);
 	int findObject(double vel, double th); 
 	void wander();
-  double goGoal(Point2D pnt);
+  bool goGoal(Point2D pnt);
    
 };
 #endif

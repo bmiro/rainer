@@ -22,7 +22,8 @@ wander:
 
 sim:
 	#xterm -hold -e "MobileSim -m /usr/local/Aria/maps/triangle.map" &
-	xterm -hold -e "MobileSim -m ./maps/quatrepunobs.map" &
+	#xterm -hold -e "MobileSim -m ./maps/quatrepunobs.map" &
+	xterm -hold -e "MobileSim -m ./maps/opstacleApunt.map" &
 	#xterm -hold -e "MobileSim -nomap" &
 	sleep 1
 	xterm -hold -e "./rainer"

@@ -157,8 +157,8 @@ void Rainer::wander() {
 	}
 }
 
-/* Retorna distancia a que s'ha quedat del punt */
-double Rainer::goGoal(Point2D pnt) {
+/* Retorna True si es considera que hi ha un obstacle al punt on es desitja anar */
+bool Rainer::goGoal(Point2D pnt) {
   double alpha, vel;
   double d;
   bool impactAlert;
