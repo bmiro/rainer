@@ -18,43 +18,28 @@ struct cell {
 
 class Map {
 private:
-  int xmax;
-  int ymax;
-  cell m[x][y];
-  Coor wai; /* Where am I */
+  cell m[][];
+  Coor robotCoor;
   
-  Coor nextCell();
-  Coor nearCell(state s);
-  bool culDeSac();
+  isDirty(Coor c) { return m[c.x][c.y].state == DIRTY; }
+  isClean(Coor c) { return m[c.x][c.y].state == CLEAN; }
+  isObstacle(Coor c){ return m[c.x][c.y].state == OBSTACLE; }
   
-  Map() { };
   
 public:
+  Map(sizex, int sizey, Coor robotCoor, Point2D robotPoint);
   
-  Map(int cellsize, int x, int y);
+  changeOrigen(Coor newCoorCenter, Point2D newPointCenter);
   
-  void init(state s);
+  void setRobotPos(Coor c);
+  Coor getNextPos(state s);
+  Coor whichCell(Point2D p);
+  Point2D getRealXY(Coor c);  
   
-  void setInitPosition(Point2D p, Coor c);
+  mark(Coor c, state s);
   
-  void markCleaned(Point2D p);
-  void markObstacled(Point2D p);
-  void markDirty(Point2D p);
-  
-  bool sameCell(Point2D p1, Point2D p2);
-  
-  bool isCleaned(Point2D p);
-  
-  bool isCenter(Point2D p);
   bool isClean();
   bool isAbsolutelyClean();
-  
-  Point2D getNextPoint();
-  
-  Point2D getFirstObstacle();
-  Point2D getNextObstacle();
-  bool lastObstacle(Point2D p);
-  
-  
+
 }
 #endif

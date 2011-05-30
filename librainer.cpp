@@ -101,22 +101,22 @@ Vect2D Rainer::obstacleRepulsion(double th, double th_dmin, bool *impactAlert) {
 }
 
 /* Fa que el robot es mogui fins que es troba a una distancia menor de th. */
-int Rainer::findObject(ArRobot *rbt, double vel, double th) {
+int Rainer::findObject(double vel, double th) {
 	ArSensorReading *sensor;	
 	double xRob, yRob, xObs, yObs, d;
 	
-	rbt->setVel(vel); 
+	ar.setVel(vel); 
   
 	while (1) {
 		xRob = rbt->getX();
 	  yRob = rbt->getY(); 
 	 	for (int i = numFirstSonar; i < numLastSonar; i++) {
-    	sensor = rbt->getSonarReading(i);
+    	sensor = ar.getSonarReading(i);
    		xObs = sensor->getX();
     	yObs = sensor->getY(); 
     	d = ArMath::distanceBetween(xRob, yRob, xObs, yObs);
 			if (d < th) {
-				rbt->setVel(0); 
+				ar.setVel(0); 
   			return 1;
 			}
 		}
@@ -133,7 +133,7 @@ void Rainer::wander(ArRobot *rbt) {
 	Vect2D vro;
 
 	Aria::setKeyHandler(&keyHandler);
-	rbt->attachKeyHandler(&keyHandler);
+	ar.attachKeyHandler(&keyHandler);
 
 	vel = normalVel;
 	th = maxDist;
@@ -150,9 +150,9 @@ void Rainer::wander(ArRobot *rbt) {
 		alpha = ArMath::atan2(vro.y, vro.x);
 
 		//Orientam el robot cap a la direcció que ha de seguir		
-		rbt->setHeading(alpha);
-		while (!rbt->isHeadingDone(thHeading)) {
-			rbt->setVel(0);
+		ar.setHeading(alpha);
+		while (!ar.isHeadingDone(thHeading)) {
+			ar.setVel(0);
 		}  	
 	}
 }

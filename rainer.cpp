@@ -10,6 +10,7 @@
 #include <iostream>
 
 #include "librainer.h"
+#include "map.h"
 
 map<string, double> param;
 
@@ -50,9 +51,7 @@ bool loadGlobalParams(string filename) {
 }
 
 int main(int argc, char **argv) {
-  
-  Map m;
-  
+    
   if (!loadGlobalParams(FILE_PATH)) {
     printf("No s'han pogut carregar els paràmetres de configuració.\n");
     return 1;
@@ -70,23 +69,9 @@ int main(int argc, char **argv) {
   Punt2D punts[] = {{0.0, 0.0}, {0.0, 5000.0}, {5000.0, 0.0}, {5000.0, 5000.0}};
 
   rainer.initArRobot(&argc, argv);
-  m.init(DIRTY);
-  m.setInitPosition(p, c); //TODO p, c
   while (rainer.ar.isRunning()) {
-    /* Netejam tot allò que ens permetin els obstacles */
-    while (!m.isClean()) {
-      p = getNextPoint();
-      rp = rainer.goGoal(p); /* En trobar obstacle ha de retornar el punt on esta */
-      if (m.isCenter(p)) {
-        m.markCleaned(p);
-      } else {
-        m.markObstacled(p);
-      }
-    }
-    if (!m.isAbsolutelyClean()) {
-      
-    }
-    
+    ;
+    ;
   }
   rainer.ar.stopRunning();
   Aria::shutdown();
