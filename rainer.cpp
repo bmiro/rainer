@@ -74,7 +74,10 @@ int main(int argc, char **argv) {
   cr.y = 0;
   while (rainer.ar.isRunning()) {
     rainer.cleanArea(param["areaXsize"], param["areaYsize"], param["cellEdge"], cr);
-    //rainer.goGoal(punts[1]);
+    /*rainer.goGoal(punts[1]);
+    rainer.goGoal(punts[2]);
+    rainer.goGoal(punts[3]);
+    rainer.goGoal(punts[0]);*/
   }
   rainer.ar.stopRunning();
   Aria::shutdown();

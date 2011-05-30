@@ -18,8 +18,8 @@ Rainer::Rainer(double pthHeading, double pthOnPoint, double pmaxDist, double pim
   normalVel = pnormalVel;
   slowVel = pslowVel;
   
-  sonarWeight = (double *)malloc(pnumSonarFront*sizeof(double));
-  behaviourWeight = (double *)malloc(2*sizeof(double));
+  sonarWeight = new double[(int)pnumSonarFront];
+  behaviourWeight = new double[2];
   
   sonarWeight = psonarWeight;
   behaviourWeight = pbehaviourWeight;
@@ -43,13 +43,13 @@ int Rainer::initArRobot(int *argc, char **argv) {
 }
 
 Vect2D Rainer::goalAttraction(Point2D goal) {
-    double vx, vy, d;
+    double vx, vy, d, d2;
     Vect2D va; /* vector atracció */
     
     d = ArMath::distanceBetween(ar.getX(), ar.getY(), goal.x, goal.y);
     vx = goal.x - ar.getX();
     vy = goal.y - ar.getY();
-    
+        
     va.x = vx / d;
     va.y = vy / d;
     
@@ -169,7 +169,6 @@ bool Rainer::goGoal(Point2D pnt) {
   bool canAccess;
    /* Vector Repulsio Obstacle, Vector Atraccio objectiu, Vector Director */
   Vect2D vro, va, vd;
- 
   //Trace trace (ELEPHANT_MEMORY, OBSTACLED_TH_DISTANCE, OBSTACLED_TH_TIME);
 
   d = DBL_MAX;
@@ -177,10 +176,13 @@ bool Rainer::goGoal(Point2D pnt) {
   while ((d >= thOnPoint) and canAccess) {
     d = ArMath::distanceBetween(ar.getX(), ar.getY(), pnt.x, pnt.y);
     
-    printf("GoGoal: %f-%f\n", ar.getX(), ar.getY());
+    //printf("GoGoal: %f-%f\n", ar.getX(), ar.getY());
     
     vro = obstacleRepulsion(maxDist, impactDist, &impactAlert);
     va = goalAttraction(pnt);
+    
+    printf("VRO: %f %f\n", vro.x, vro.y);
+    printf("VA: %f %f\n", va.x, va.y);
     
     if (impactAlert) {
       /* Col.lisió imminent, sols tenim amb compte el vector de repulsió*/
