@@ -200,6 +200,27 @@ bool Rainer::goGoal(Point2D pnt) {
   return ArMath::distanceBetween(ar.getX(), ar.getY(), pnt.x, pnt.y);
 }
 
+void Rainer::cleanArea() {
+
+	Point2D robotPoint, p;
+	Coor robotCoor, c;
+	
+	robotCoor.x = 0;
+	robotCoor.y = 0;	
+	robotPoint.x = ar.getX();
+	robotPoint.y = ar.getY();
+	
+	RainerMap rm(15, 15, 500, robotCoor, robotPoint); 
+	rm.mark(robotCoor, CLEAN);
+	while (!rm.isClean()) {
+		c = rm.getNextPos(CLEAN);		
+		p = rm.getRealXY(c);
+		goGoal(p);
+		rm.mark(c, CLEAN);		
+		rm.setRobotPos(c);
+	}
+}
+
 /* Segueix un contorn a distància D, en tornar passar per un punt on ha estat
 * la funció acaba i retorna el mapa de l'objecte */
 // bool followCountourn(ArRobot *rbt, double d) {
