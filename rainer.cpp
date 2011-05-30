@@ -69,8 +69,11 @@ int main(int argc, char **argv) {
   Point2D punts[] = {{0.0, 0.0}, {0.0, 5000.0}, {5000.0, 0.0}, {5000.0, 5000.0}};
 
   rainer.initArRobot(&argc, argv);
+  Coor cr;
+  cr.x = 0;
+  cr.y = 0;
   while (rainer.ar.isRunning()) {
-    rainer.cleanArea();
+    rainer.cleanArea(param["areaXsize"], param["areaYsize"], param["cellEdge"], cr);
     //rainer.goGoal(punts[1]);
   }
   rainer.ar.stopRunning();

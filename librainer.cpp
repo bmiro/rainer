@@ -170,7 +170,7 @@ bool Rainer::goGoal(Point2D pnt) {
    /* Vector Repulsio Obstacle, Vector Atraccio objectiu, Vector Director */
   Vect2D vro, va, vd;
  
-  Trace trace (ELEPHANT_MEMORY, OBSTACLED_TH_DISTANCE, OBSTACLED_TH_TIME);
+  //Trace trace (ELEPHANT_MEMORY, OBSTACLED_TH_DISTANCE, OBSTACLED_TH_TIME);
 
   d = DBL_MAX;
   canAccess = true;
@@ -187,6 +187,7 @@ bool Rainer::goGoal(Point2D pnt) {
       vd.x = vro.x;
       vd.y = vro.y;
       vel = slowVel;
+      printf("Colisio imminet!!\n");
     } else {
       /* Recalculam el vector director del moviment del robot */
       vd.x = behaviourWeight[BH_GOAL] * va.x + behaviourWeight[BH_OBSTACLE] * vro.x;
@@ -203,26 +204,23 @@ bool Rainer::goGoal(Point2D pnt) {
 
     ar.setVel(vel);
     ArUtil::sleep(blindTime);
-    Point2D hereP;
-    hereP.x = ar.getX();
-    hereP.y = ar.getY();
-    trace.add(hereP);
-    canAccess = not trace.isInnaccessible();   
+    //Point2D hereP;
+    //hereP.x = ar.getX();
+    //hereP.y = ar.getY();
+    //trace.add(hereP);
+    canAccess = true;//not trace.isInnaccessible();   
   }
   return canAccess;
 }
 
-void Rainer::cleanArea() {
-
+void Rainer::cleanArea(int xs, int ys, double ce, Coor robotCoor) {
   Point2D robotPoint, p;
-  Coor robotCoor, c;
+  Coor c;
 
-  robotCoor.x = 0;
-  robotCoor.y = 0;
   robotPoint.x = ar.getX();
   robotPoint.y = ar.getY();
   
-  RainerMap mp(8, 8, 500.0, robotCoor, robotPoint); 
+  RainerMap mp(xs, ys, ce, robotCoor, robotPoint); 
   mp.printMap();
   mp.mark(robotCoor, CLEAN);  
   while (!mp.isClean()) {

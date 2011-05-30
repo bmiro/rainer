@@ -1,6 +1,8 @@
 #ifndef LIBRAINER_H
 #define LIBRAINER_H
 
+#include <float.h>
+
 #include "Aria.h"
 
 #include "common_rainer.h"
@@ -70,7 +72,7 @@ public:
   void wander();
   bool goGoal(Point2D pnt);
 
-	void cleanArea();
+	void cleanArea(int xs, int zs, double ce, Coor robotCoor);
    
 };
 #endif
