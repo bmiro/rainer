@@ -1,8 +1,8 @@
 #include "librainermap.h"
 
 RainerMap::RainerMap (int sizex, int sizey, double cellEdge, Coor rc, Point2D robotPoint) {
-  xmax = sizex -1; /* Recorda de 0 a 7! */  
-  ymax = sizey -1;
+  xmax = sizex; /* Recorda de 0 a 7! */  
+  ymax = sizey;
   robotCell.x = rc.x;
   robotCell.y = rc.y;
 
@@ -27,17 +27,19 @@ void RainerMap::setRobotPos(Coor c) {
 
 Coor RainerMap::zigZagHorizontal() {
   Coor c; 
-
-  if (robotCell.x < xmax) {
+  
+  if (robotCell.x < xmax-1) {
     c.x = robotCell.x + 1;
     c.y = robotCell.y;
-  } else if (robotCell.x == xmax and robotCell.y < ymax) {
+  } else if (robotCell.x == (xmax-1) and robotCell.y < (ymax-1)) {
     c.x = 0;
     c.y = robotCell.y + 1;
-  } else if (robotCell.x == xmax and robotCell.y == ymax) {
+  } else if (robotCell.x == (xmax-1) and robotCell.y == (ymax-1)) {
     c.x = 0;
     c.y = 0;
   }
+
+  printf("\n%d-%d\n", c.x, c.y);
 
   return c;
 }
@@ -95,7 +97,7 @@ char RainerMap::charOf(int x, int y) {
 }
 
 void RainerMap::printMap() {
-  for (int y = ymax-1; y+1 ; y--) {
+  for (int y = ymax -1; y+1; y--) {
     printf("%d |", y);
     for (int x = 0; x < xmax; x++) {
         printf("%c", charOf(x, y));

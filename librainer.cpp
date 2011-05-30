@@ -226,6 +226,7 @@ void Rainer::cleanArea() {
   while (!mp.isClean()) {
     c = mp.getNextPos(CLEAN);
     p = mp.getRealXY(c);
+    printf("\n%f-%f\n", p.x, p.y);
     goGoal(p);
     mp.mark(c, CLEAN);
     mp.setRobotPos(c);
