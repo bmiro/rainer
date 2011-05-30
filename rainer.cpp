@@ -70,7 +70,7 @@ int main(int argc, char **argv) {
 
   rainer.initArRobot(&argc, argv);
   while (rainer.ar.isRunning()) {
-    rainer.cleanArea();
+    ;//rainer.cleanArea();
   }
   rainer.ar.stopRunning();
   Aria::shutdown();

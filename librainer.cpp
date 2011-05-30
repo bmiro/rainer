@@ -167,12 +167,13 @@ bool Rainer::goGoal(Point2D pnt) {
   double d;
   bool impactAlert;
   bool canAccess;
-  Trace trace(ELEPHANT_MEMORY, OBSTACLED_TH_DISTANCE, OBSTACLED_TH_TIME);
    /* Vector Repulsio Obstacle, Vector Atraccio objectiu, Vector Director */
   Vect2D vro, va, vd;
-  
+ 
+  Trace trace (ELEPHANT_MEMORY, OBSTACLED_TH_DISTANCE, OBSTACLED_TH_TIME);
+
   d = DBL_MAX;
-  bool canAccess = true;
+  canAccess = true;
   while ((d >= thOnPoint) and canAccess) {
     d = ArMath::distanceBetween(ar.getX(), ar.getY(), pnt.x, pnt.y);
         
@@ -200,10 +201,13 @@ bool Rainer::goGoal(Point2D pnt) {
 
     ar.setVel(vel);
     ArUtil::sleep(blindTime);
-    trace.update();
+    Point2D hereP;
+    hereP.x = ar.getX();
+    hereP.y = ar.getY();
+    trace.add(hereP);
     canAccess = not trace.isInnaccessible();   
   }
-  return cantAccess;
+  return canAccess;
 }
 
 /* Segueix un contorn a distància D, en tornar passar per un punt on ha estat

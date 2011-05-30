@@ -1,7 +1,7 @@
 #ifndef MAP_N
 #define MAP
 
-#include "common_rainer.h"
+#include "lib2d.h"
 
 enum State {CLEAN, DIRTY, OBSTACLE};
 

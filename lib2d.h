@@ -1,5 +1,5 @@
-#ifndef LIBTRACE_H
-#define LIBTRACE_H
+#ifndef LIBP2D_H
+#define LIBP2D_H
 
 struct Point2D {
   double x;
