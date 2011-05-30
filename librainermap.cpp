@@ -1,10 +1,10 @@
 #include "librainermap.h"
 
 RainerMap::RainerMap (int sizex, int sizey, double cellEdge, Coor rc, Point2D robotPoint) {
-  xmax = sizex; 
-  ymax = sizey;
-  robotCoor.x = rc.x;
-  robotCoor.y = rc.y;
+  xmax = sizex -1; /* Recorda de 0 a 7! */  
+  ymax = sizey -1;
+  robotCell.x = rc.x;
+  robotCell.y = rc.y;
 
   m = new Cell*[sizex];
   for (int x = 0; x < xmax; x++) {
@@ -14,33 +14,36 @@ RainerMap::RainerMap (int sizex, int sizey, double cellEdge, Coor rc, Point2D ro
   for (int i = 0; i < xmax; i++) {
     for (int j = 0; j < ymax; j++) {
       m[i][j].state = DIRTY;
-      m[i][j].realCenter.x = robotPoint.x + (i - robotCoor.x) * cellEdge;
-      m[i][j].realCenter.y = robotPoint.y + (j - robotCoor.y) * cellEdge;
+      m[i][j].realCenter.x = robotPoint.x + (i - robotCell.x) * cellEdge;
+      m[i][j].realCenter.y = robotPoint.y + (j - robotCell.y) * cellEdge;
     }
   }
 }
   
 void RainerMap::setRobotPos(Coor c) {
-  robotCoor.x = c.x;
-  robotCoor.y = c.y;
+  robotCell.x = c.x;
+  robotCell.y = c.y;
 }
 
-Coor RainerMap::getNextPos(State s) {
+Coor RainerMap::zigZagHorizontal() {
   Coor c; 
 
-  if (robotCoor.x < xmax) {
-    c.x = robotCoor.x + 1;
-    c.y = robotCoor.y;
-  } else if (robotCoor.y < ymax) {
+  if (robotCell.x < xmax) {
+    c.x = robotCell.x + 1;
+    c.y = robotCell.y;
+  } else if (robotCell.x == xmax and robotCell.y < ymax) {
     c.x = 0;
-    c.y = robotCoor.y + 1;
-  } else {
+    c.y = robotCell.y + 1;
+  } else if (robotCell.x == xmax and robotCell.y == ymax) {
     c.x = 0;
     c.y = 0;
   }
 
   return c;
+}
 
+Coor RainerMap::getNextPos(State s) {
+  return zigZagHorizontal();
 }
 
 Point2D RainerMap::getRealXY(Coor c) {
@@ -80,7 +83,7 @@ bool RainerMap::isAbsolutelyClean() {
 }
 
 char RainerMap::charOf(int x, int y) {
-  if (robotCoor.x == x and robotCoor.y == y) {
+  if (robotCell.x == x and robotCell.y == y) {
     return RBT_CHAR;
   }  
   
@@ -92,7 +95,7 @@ char RainerMap::charOf(int x, int y) {
 }
 
 void RainerMap::printMap() {
-  for (int y = ymax; y ; y--) {
+  for (int y = ymax-1; y+1 ; y--) {
     printf("%d |", y);
     for (int x = 0; x < xmax; x++) {
         printf("%c", charOf(x, y));

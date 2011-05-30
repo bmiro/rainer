@@ -219,23 +219,17 @@ void Rainer::cleanArea() {
   robotCoor.y = 0;
   robotPoint.x = ar.getX();
   robotPoint.y = ar.getY();
-
-  puts("merda");
   
-  RainerMap rm(8, 8, 500.0, robotCoor, robotPoint); 
-  rm.printMap();
-  rm.mark(robotCoor, CLEAN);
-  rm.printMap();
-  
-  puts("puta");
-
-  
-  while (!rm.isClean()) {
-    c = rm.getNextPos(CLEAN);
-    p = rm.getRealXY(c);
+  RainerMap mp(8, 8, 500.0, robotCoor, robotPoint); 
+  mp.printMap();
+  mp.mark(robotCoor, CLEAN);  
+  while (!mp.isClean()) {
+    c = mp.getNextPos(CLEAN);
+    p = mp.getRealXY(c);
     goGoal(p);
-    rm.mark(c, CLEAN);
-    rm.setRobotPos(c);
+    mp.mark(c, CLEAN);
+    mp.setRobotPos(c);
+    mp.printMap();
   }
 }
 

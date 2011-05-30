@@ -24,12 +24,14 @@ struct Cell {
 class RainerMap {
 private:
   Cell **m; /* Mapa bi-dimensional l'inicialitzara i alocarà el constructor */
-  Coor robotCoor;
+  Coor robotCell;
   int xmax, ymax;
   
   bool isDirty(Coor c) { return m[c.x][c.y].state == DIRTY; }
   bool isClean(Coor c) { return m[c.x][c.y].state == CLEAN; }
   bool isObstacle(Coor c) { return m[c.x][c.y].state == OBSTACLE; }
+  
+  Coor zigZagHorizontal();
   
   char charOf(int x, int y);
   
