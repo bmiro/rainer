@@ -1,0 +1,28 @@
+2D-Map
+Resolution: 0
+LineMinPos: -1030 3722
+LineMaxPos: 570 5867
+NumLines: 3
+LinesAreSorted: true
+MapInfo: DockType "Name=Dock" "Label=Dock" "NameRequired=1" "Color0=0xffff00" "Color1=0x000000" "Color2=0x000000" "FtFix=1" "FtSize=12" "Heading=Required"
+MapInfo: GoalType "Name=Goal" "Label=Goal" "NameRequired=1" "Color0=0x008080" "Color1=0x00ffff" "Color2=0x008080" "FtFix=1" "FtSize=12"
+MetaInfo: Rotation "Value=0"
+MetaInfo: Feature "Name=changeprocessing"
+RouteInfo: EveryBefore "_everyBefore"
+RouteInfo: EveryAfter "_everyAfter"
+SchedInfo: Current "_Friday"
+SchedInfo: Current "_Monday"
+SchedInfo: Current "_Saturday"
+SchedInfo: Current "_Sunday"
+SchedInfo: Current "_Thursday"
+SchedInfo: Current "_Tuesday"
+SchedInfo: Current "_Wednesday"
+Cairn: RobotHome 0 0 0.000000 "" ICON "Home"
+Cairn: Goal 0 5000 0.000000 "" ICON "0, 5000"
+Cairn: Goal 5000 0 0.000000 "" ICON "5000, 0"
+Cairn: Goal 5000 5000 0.000000 "" ICON "5000, 5000"
+LINES
+-1030 5190 437 3722
+472 5781 472 3764
+570 5867 -1030 5207
+DATA
