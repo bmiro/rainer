@@ -16,7 +16,7 @@ Rainer::Rainer(double pthHeading, double pthOnPoint, double pmaxDist, double pim
   numLastSonar = pnumLastSonar;
   
   normalVel = pnormalVel;
-	slowVel = pslowVel;
+  slowVel = pslowVel;
   
   sonarWeight = (double *)malloc(pnumSonarFront*sizeof(double));
   behaviourWeight = (double *)malloc(2*sizeof(double));
@@ -212,23 +212,31 @@ bool Rainer::goGoal(Point2D pnt) {
 
 void Rainer::cleanArea() {
 
-	Point2D robotPoint, p;
-	Coor robotCoor, c;
-	
-	robotCoor.x = 0;
-	robotCoor.y = 0;	
-	robotPoint.x = ar.getX();
-	robotPoint.y = ar.getY();
-	
-	RainerMap rm(15, 15, 500, robotCoor, robotPoint); 
-	rm.mark(robotCoor, CLEAN);
-	while (!rm.isClean()) {
-		c = rm.getNextPos(CLEAN);		
-		p = rm.getRealXY(c);
-		goGoal(p);
-		rm.mark(c, CLEAN);		
-		rm.setRobotPos(c);
-	}
+  Point2D robotPoint, p;
+  Coor robotCoor, c;
+
+  robotCoor.x = 0;
+  robotCoor.y = 0;
+  robotPoint.x = ar.getX();
+  robotPoint.y = ar.getY();
+
+  puts("merda");
+  
+  RainerMap rm(8, 8, 500.0, robotCoor, robotPoint); 
+  rm.printMap();
+  rm.mark(robotCoor, CLEAN);
+  rm.printMap();
+  
+  puts("puta");
+
+  
+  while (!rm.isClean()) {
+    c = rm.getNextPos(CLEAN);
+    p = rm.getRealXY(c);
+    goGoal(p);
+    rm.mark(c, CLEAN);
+    rm.setRobotPos(c);
+  }
 }
 
 /* Segueix un contorn a distància D, en tornar passar per un punt on ha estat

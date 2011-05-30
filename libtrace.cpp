@@ -4,7 +4,7 @@ Trace::Trace(int pMemSize, double pDistanceTh, time_t pTimeTh) {
   
 }
 bool Trace::isInnaccessible() {
-  
+  return false;
 }
 
 bool Trace::reset() {
