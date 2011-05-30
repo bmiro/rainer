@@ -6,6 +6,7 @@
 #include "lib2d.h"
 #include "libtrace.h"
 
+
 #define BH_GOAL 0
 #define BH_OBSTACLE 1
 
@@ -67,6 +68,8 @@ public:
   int findObject(double vel, double th); 
   void wander();
   bool goGoal(Point2D pnt);
+
+	void cleanArea();
    
 };
 #endif
