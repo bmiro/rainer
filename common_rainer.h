@@ -15,13 +15,3 @@
 using namespace std;
 
 //map<string, double> param;
-
-struct Point2D {
-  double x;
-  double y;
-};
-
-struct Vect2D {
-  double x;
-  double y;
-};

@@ -10,6 +10,7 @@
 #include <iostream>
 
 #include "librainer.h"
+#include "lib2d.h"
 
 map<string, double> param;
 
@@ -69,8 +70,7 @@ int main(int argc, char **argv) {
 
   rainer.initArRobot(&argc, argv);
   while (rainer.ar.isRunning()) {
-    ;
-    ;
+    rainer.cleanArea();
   }
   rainer.ar.stopRunning();
   Aria::shutdown();
