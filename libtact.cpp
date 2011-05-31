@@ -46,6 +46,7 @@ int TactRainer::init(int *argc, char **argv) {
   ar.comInt(ArCommands::SOUNDTOG, 1);
   ar.comInt(ArCommands::ENABLE, 1); //Habilitar els motors
   ar.runAsync(false);
+  return 0;
 }
 
 Vect2D TactRainer::goalAttraction(Point2D goal) {
@@ -54,10 +55,10 @@ Vect2D TactRainer::goalAttraction(Point2D goal) {
 }
 
 Vect2D TactRainer::obstacleRepulsion(double th, double th_dmin, bool *impactAlert) {
-  double mod_vObs [numSonar];
+  double mod_vObs [numSonar]; //TODO revisar perque s'ha de emprar
   double di = 0.0;
   double dmin = DBL_MAX;
-  Vect2D vObs [numSonar];
+  Vect2D vObs [numSonar]; 
   Vect2D vRep (0.0, 0.0);
   ArSensorReading *sensor;
   

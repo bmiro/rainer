@@ -94,6 +94,7 @@ char RainerMap::charOf(int x, int y) {
     case CLEAN:    return CLN_CHAR;
     case DIRTY:    return DTY_CHAR;
   }
+  return 0;
 }
 
 void RainerMap::printMap() {

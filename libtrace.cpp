@@ -16,8 +16,8 @@ Trace::Trace(int pMemSize, double pDistanceTh, time_t pTimeTh) {
   
 }
 bool Trace::isInnaccessible() {
-  int meanTime;
-  int meanDist;
+  //int meanTime;
+  double meanDist;
   int total;
   int i,j ,k;
 
@@ -50,9 +50,7 @@ bool Trace::isInnaccessible() {
   }
   
   printf("total %d, k %d", total, k);
-  
-  //printf("isInnaDthAK: %f\n", distanceTh);
-  
+    
   for (k = 0; k < total; k++) {
     meanDist += dists[k];
   }
