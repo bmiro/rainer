@@ -23,7 +23,7 @@ public:
   double pblindTime, double pnumSonarFront, double pnumFirstSonar, double pnumLastSonar,
   double pslowVel, double pnormalVel, double *psonarWeight, double *pbehaviourWeight,
   time_t pTimeObstacledTh, double pDistObstacledTh, int pDlephantMem);
-  
+    
   int findObject(double vel, double th); 
   void wander();
 

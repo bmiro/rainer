@@ -1,4 +1,4 @@
-TarctRainer::  TarctRainer(double pthHeading, double pthOnPoint, double pmaxDist, double pimpactDist,
+TarctRainer::TarctRainer(double pthHeading, double pthOnPoint, double pmaxDist, double pimpactDist,
   double pblindTime, double pnumSonarFront, double pnumFirstSonar, double pnumLastSonar,
   double pslowVel, double pnormalVel, double *psonarWeight, double *pbehaviourWeight,
   time_t pTimeObstacledTh, double pDistObstacledTh, int pDlephantMem) {

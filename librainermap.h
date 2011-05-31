@@ -1,5 +1,5 @@
-#ifndef MAP_N
-#define MAP
+#ifndef MAP_H
+#define MAP_H
 
 #include <stdio.h>
 #include "stdlib.h"

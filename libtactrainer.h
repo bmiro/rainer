@@ -8,7 +8,6 @@
 #include "common_rainer.h"
 #include "lib2d.h"
 #include "libtrace.h"
-#include "librainermap.h"
 
 #define BH_GOAL 0
 #define BH_OBSTACLE 1
