@@ -14,7 +14,7 @@ libtrace:
 	g++ -c libtrace.cpp
 
 libtact:
-	g++ -c libtactrainer.cpp 
+	g++ -c libtactrainer.cpp -I/usr/local/Aria/include 
 
 lib2d:
 	g++ -c lib2d.cpp

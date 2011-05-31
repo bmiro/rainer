@@ -1,5 +1,7 @@
-TarctRainer::TarctRainer(double pthHeading, double pthOnPoint, double pmaxDist, double pimpactDist,
-  double pblindTime, double pnumSonarFront, double pnumFirstSonar, double pnumLastSonar,
+#include "libtactrainer.h"
+
+TactRainer::TactRainer(double pthHeading, double pthOnPoint, double pmaxDist, double pimpactDist,
+  double pblindTime, double pnumSonar, double pnumFirstSonar, double pnumLastSonar,
   double pslowVel, double pnormalVel, double *psonarWeight, double *pbehaviourWeight,
   time_t pTimeObstacledTh, double pDistObstacledTh, int pDlephantMem) {
   
@@ -10,7 +12,7 @@ TarctRainer::TarctRainer(double pthHeading, double pthOnPoint, double pmaxDist, 
   
   blindTime = pblindTime;
   
-  numSonarFront = pnumSonarFront;
+  numSonar = pnumSonar;
   numFirstSonar = pnumFirstSonar;
   numLastSonar = pnumLastSonar;
   
@@ -22,14 +24,14 @@ TarctRainer::TarctRainer(double pthHeading, double pthOnPoint, double pmaxDist, 
     
   elephantMem = pDlephantMem;
   
-  sonarWeight = new double[(int)pnumSonarFront];
+  sonarWeight = new double[(int)numSonar];
   behaviourWeight = new double[2];
   
   sonarWeight = psonarWeight;
   behaviourWeight = pbehaviourWeight;
 }
 
-int TarctRainer::init(int *argc, char **argv) {
+int TactRainer::init(int *argc, char **argv) {
   Aria::init();
   ArSimpleConnector connector(argc, argv);
   if (!connector.parseArgs() || *argc > 1) {
@@ -46,34 +48,40 @@ int TarctRainer::init(int *argc, char **argv) {
   ar.runAsync(false);
 }
 
-Vect2D TarctRainer::goalAttraction(Point2D goal) {
-    Vect2D va(ar.getX(), ar.getY(), goal.x, goal.y)
-    return va.norm();   
-  }
+Vect2D TactRainer::goalAttraction(Point2D goal) {
+  Vect2D va(ar.getX(), ar.getY(), goal.x, goal.y);
+  return va.norm();   
+}
 
-Vect2D TarctRainer::obstacleRepulsion(double th, double th_dmin, bool *impactAlert) {
-  double mod_vObs [numSensor];
+Vect2D TactRainer::obstacleRepulsion(double th, double th_dmin, bool *impactAlert) {
+  double mod_vObs [numSonar];
   double di = 0.0;
-  Vect2D vObs [numSensor];
+  double dmin = DBL_MAX;
+  Vect2D vObs [numSonar];
   Vect2D vRep (0.0, 0.0);
   ArSensorReading *sensor;
   
-  for (int i = firstSensor; i <= lastSensor; i++) {
+  for (int i = numFirstSonar; i <= numLastSonar; i++) {
     sensor = ar.getSonarReading(i);
-    di = sensor.getRange();
+    di = (double)sensor->getRange();
+    
+    if (di < dmin) {
+      dmin = di;
+    }
+
     if (di < th) {
-      vObs[i].setXY(s.getSonarDX, s.getSonarDY);
+      vObs[i].setXY(sensor->getSensorDX(), sensor->getSensorDY());
       mod_vObs[i] = CALC_MOD_VOBS(maxDist, di);
     } else {
       vObs[i].setZero();
       mod_vObs[i] = 0.0;
     }
-    vObs += sonarWeight[i] * vRep[i];
+    vRep += vObs[i] * sonarWeight[i];
   }
   
   *impactAlert = (dmin < th_dmin);
 
-  return vObs.norm();
+  return vRep.norm();
 }
 
 /* Fa que el robot vagi al punt pnt evitant els obstaques que troba. 
@@ -81,7 +89,7 @@ Vect2D TarctRainer::obstacleRepulsion(double th, double th_dmin, bool *impactAle
  *   False si es considera que no es pot arribar al punt 
  *   True si ha pogut arribar al punt
  */
-bool TarctRainer::goGoal(Point2D pnt) {
+bool TactRainer::goGoal(Point2D pnt) {
   double alpha, vel;
   double d;
   bool impactAlert;
@@ -108,7 +116,7 @@ bool TarctRainer::goGoal(Point2D pnt) {
       printf("Alerta de col.lisió imminet!!\n");
     } else {
       /* Recalculam el vector director del moviment del robot */
-      vd = va * behaviourWeight[BH_GOAL] + vro * behaviourWeight[BH_OBSTACLE];
+      vd = (va * behaviourWeight[BH_GOAL]) + (vro * behaviourWeight[BH_OBSTACLE]);
       
       vel = normalVel;
     }

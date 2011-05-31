@@ -1,13 +1,13 @@
 #include "librainer.h"
 
-TarctRainer::  TarctRainer(double pthHeading, double pthOnPoint, double pmaxDist, double pimpactDist,
-  double pblindTime, double pnumSonarFront, double pnumFirstSonar, double pnumLastSonar,
+Rainer::Rainer(double pthHeading, double pthOnPoint, double pmaxDist, double pimpactDist,
+  double pblindTime, double pnumSonar, double pnumFirstSonar, double pnumLastSonar,
   double pslowVel, double pnormalVel, double *psonarWeight, double *pbehaviourWeight,
   time_t pTimeObstacledTh, double pDistObstacledTh, int pDlephantMem) {
   
   TactRainer tact(pthHeading, pthOnPoint, pmaxDist, pimpactDist,
-                  pblindTime, pnumSonarFront, pnumFirstSonar, pnumLastSonar,
-                  pslowVel, pnormalVel, *psonarWeight, *pbehaviourWeight,
+                  pblindTime, pnumSonar, pnumFirstSonar, pnumLastSonar,
+                  pslowVel, pnormalVel, psonarWeight, pbehaviourWeight,
                   pTimeObstacledTh, pDistObstacledTh, pDlephantMem);
                   
   exec = tact.&ar;

@@ -20,6 +20,10 @@ void Point2D::setZero() {
   y = 0.0;
 }
 
+bool Point2D::isZero() {
+  return (x == 0.0 and y == 0.0);
+}
+
 bool Point2D::operator ==(const Point2D& pt) {
   return (x == pt.x) and (y == pt.y);
 }
@@ -39,7 +43,7 @@ Point2D& Point2D::operator -=(const Point2D& pt) {
   y -= pt.y;
 }
 
-Point2D Point2D::operator +(const Point2D& pt) {
+Point2D Point2D::operator +(const Point2D pt) {
   Point2D v;
   
   v.x = x + pt.x;
@@ -47,7 +51,7 @@ Point2D Point2D::operator +(const Point2D& pt) {
   return v;
 }
 
-Point2D Point2D::operator -(const Point2D& pt) {
+Point2D Point2D::operator -(const Point2D pt) {
   Point2D v;
   
   v.x = x - pt.x;
@@ -72,6 +76,27 @@ Vect2D::Vect2D (Point2D dp, Point2D op) {
 Vect2D::Vect2D (double dx, double dy, double ox, double oy) {
   x = dx - ox;
   y = dy - oy;
+}
+
+Vect2D& Vect2D::operator =(const Vect2D& vec) {
+  x = vec.x;
+  y = vec.y;
+}
+
+Vect2D Vect2D::operator +(const Vect2D vec) {
+  Vect2D v;
+  
+  v.x = x + vec.x;
+  v.y = y + vec.y;
+  return v;
+}
+
+Vect2D Vect2D::operator -(const Vect2D vec) {
+  Vect2D v;
+  
+  v.x = x - vec.x;
+  v.y = y - vec.y;
+  return v;
 }
 
 /* Multiplicacio i divisió per escalar */

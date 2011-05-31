@@ -25,5 +25,8 @@ int main(int argc, char **argv) {
   v = v.norm();
   printf("v(%f, %f)\n", v.x, v.y);
   printf("|v| %f)\n", v.module());
+  
+  v = v + v;
+  
 
 }

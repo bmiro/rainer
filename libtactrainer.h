@@ -24,9 +24,9 @@ private:
   
   double blindTime;
   
-  double numSonarFront;
-  double numFirstSonar;
-  double numLastSonar;
+  int numSonar;
+  int numFirstSonar;
+  int numLastSonar;
   
   double slowVel;
   double normalVel;
@@ -41,23 +41,18 @@ private:
   Vect2D goalAttraction(Point2D goal);
   Vect2D obstacleRepulsion(double th, double th_dmin, bool *impactAlert);
    
-  Rainer() { };
+  //TactRainer() { };
   
 public:
   ArRobot ar; /* Robot de l'aria */
   
   TactRainer(double pthHeading, double pthOnPoint, double pmaxDist, double pimpactDist,
-  double pblindTime, double pnumSonarFront, double pnumFirstSonar, double pnumLastSonar,
+  double pblindTime, double pnumSonar, double pnumFirstSonar, double pnumLastSonar,
   double pslowVel, double pnormalVel, double *psonarWeight, double *pbehaviourWeight,
   time_t pTimeObstacledTh, double pDistObstacledTh, int pDlephantMem);
   
   int init(int *argc, char **argv);
  
-  int findObject(double vel, double th); 
-  void wander();
   bool goGoal(Point2D pnt);
-
-  void cleanArea(int xs, int zs, double ce, Coor robotCoor);
-   
 };
 #endif

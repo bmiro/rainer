@@ -14,13 +14,14 @@ class Point2D {
     
     void setXY(double xx, double yy);
     void setZero();
+    bool isZero();
     
     bool operator ==(const Point2D& pt);
     Point2D& operator =(const Point2D& pt);
     Point2D& operator +=(const Point2D& pt);
     Point2D& operator -=(const Point2D& pt);
-    Point2D operator +(const Point2D& pt);
-    Point2D operator -( const Point2D& pt);
+    Point2D operator +(const Point2D pt);
+    Point2D operator -(const Point2D pt);
     
 };
 
@@ -31,7 +32,11 @@ class Vect2D : public Point2D {
     Vect2D (double xx, double yy);
     Vect2D (Point2D dp, Point2D op);
     Vect2D (double dx, double dy, double ox, double oy);
-    
+
+    Vect2D& operator =(const Vect2D& vec);
+    Vect2D operator +(const Vect2D vec);
+    Vect2D operator -(const Vect2D vec);
+
     /* Multiplicacio i divisió per escalar */
     Vect2D operator *(const double scalar);
     Vect2D operator /(const double scalar);
