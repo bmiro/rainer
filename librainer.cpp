@@ -21,6 +21,7 @@ Rainer::  Rainer(double pthHeading, double pthOnPoint, double pmaxDist, double p
   
   timeObstacledTh = pTimeObstacledTh;
   distObstacledTh = pDistObstacledTh;
+    
   elephantMem = pDlephantMem;
   
   sonarWeight = new double[(int)pnumSonarFront];
@@ -174,6 +175,9 @@ bool Rainer::goGoal(Point2D pnt) {
   bool canAccess;
    /* Vector Repulsio Obstacle, Vector Atraccio objectiu, Vector Director */
   Vect2D vro, va, vd;
+  
+  printf("ggDth: %f", distObstacledTh);
+  
   Trace trace (elephantMem, distObstacledTh, timeObstacledTh);
 
   d = DBL_MAX;

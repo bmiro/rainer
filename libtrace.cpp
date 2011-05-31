@@ -5,6 +5,9 @@ Trace::Trace(int pMemSize, double pDistanceTh, time_t pTimeTh) {
   t = new traceItem[memSize];
   
   distanceTh = pDistanceTh;
+  
+  printf("lbtDth: %f\n", distanceTh);
+  
   timeTh = pTimeTh;
   
   lastIn = memSize - 1; // Sera circular, inicialitzam el mes gros per 0 ser el primer
@@ -14,6 +17,8 @@ bool Trace::isInnaccessible() {
   int meanDist;
   int total;
   
+  printf("isInnaDth: %f\n", distanceTh);
+
   for (int i = 0; i < memSize; i++) {
     total += i;
   }
