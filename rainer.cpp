@@ -69,18 +69,18 @@ int main(int argc, char **argv) {
                 
   Point2D punts[] = {{0.0, 0.0}, {0.0, 5000.0}, {5000.0, 0.0}, {5000.0, 5000.0}};
 
-  rainer.initArRobot(&argc, argv);
+  rainer.exec.init(&argc, argv);
   Coor cr;
   cr.x = 0;
   cr.y = 0;
-  while (rainer.ar.isRunning()) {
+  while (rainer.exec.isRunning()) {
     //rainer.cleanArea(param["areaXsize"], param["areaYsize"], param["cellEdge"], cr);
-    rainer.goGoal(punts[1]);
-    rainer.goGoal(punts[2]);
+    rainer.tact.goGoal(punts[1]);
+    rainer.tact.goGoal(punts[2]);
     /*rainer.goGoal(punts[3]);
     rainer.goGoal(punts[0]);*/
   }
-  rainer.ar.stopRunning();
+  rainer.exec.stopRunning();
   Aria::shutdown();
   return 0;
 }
