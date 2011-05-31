@@ -91,7 +91,7 @@ Vect2D Rainer::obstacleRepulsion(double th, double th_dmin, bool *impactAlert) {
       modV = (th - d) / th;
       /* Normalitzam el vector generat per aquest sensor */
       vux = vx / modV; //TODO alerta possible divisió per 0 que ha de ser controlada
-      vux = vy / modV;
+      vuy = vy / modV;
       /* Poderam i acumulam al vector de repulsió */
       vr.x += sonarWeight[i] * vx;
       vr.y += sonarWeight[i] * vy;
@@ -173,6 +173,7 @@ bool Rainer::goGoal(Point2D pnt) {
   double d;
   bool impactAlert;
   bool canAccess;
+  Point2D hereP;
    /* Vector Repulsio Obstacle, Vector Atraccio objectiu, Vector Director */
   Vect2D vro, va, vd;
   
@@ -215,10 +216,9 @@ bool Rainer::goGoal(Point2D pnt) {
 
     ar.setVel(vel);
     ArUtil::sleep(blindTime);
-    Point2D hereP;
+
     hereP.x = ar.getX();
     hereP.y = ar.getY();
-    puts("Here!");
     trace.add(hereP);
     canAccess = not trace.isInnaccessible();   
   }
