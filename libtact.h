@@ -40,11 +40,11 @@ private:
 public:
   ArRobot ar; /* Robot de l'aria */
   
-  TactRainer();
-  TactRainer(double pthHeading, double pthOnPoint, double pmaxDist, double pimpactDist,
-  double pblindTime, double pnumSonar, double pnumFirstSonar, double pnumLastSonar,
-  double pslowVel, double pnormalVel, double *psonarWeight, double *pbehaviourWeight,
-  time_t pTimeObstacledTh, double pDistObstacledTh, int pDlephantMem);
+  //TactRainer();
+  TactRainer(double pthHeading=0.0, double pthOnPoint=0.0, double pmaxDist=0.0, double pimpactDist=0.0,
+  double pblindTime=0.0, double pnumSonar=0.0, double pnumFirstSonar=0.0, double pnumLastSonar=0.0,
+  double pslowVel=0.0, double pnormalVel=0.0, double *psonarWeight=NULL, double *pbehaviourWeight=NULL,
+  time_t pTimeObstacledTh=0, double pDistObstacledTh=0.0, int pDlephantMem=0);
   
   int init(int *argc, char **argv);
  
