@@ -18,7 +18,7 @@ lib2d:
 
 provalib2d: lib2d
 	g++ -c provesLlib2d.cpp
-	g++ lib2d. provesLlib2d.o -o l2d
+	g++ lib2d.o provesLlib2d.o -o l2d
 
 wander:
 	g++ -c wander.cpp -I/usr/local/Aria/include
