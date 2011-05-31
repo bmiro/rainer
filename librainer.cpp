@@ -13,10 +13,6 @@ Rainer::Rainer(double pthHeading, double pthOnPoint, double pmaxDist, double pim
   exec = &tact.ar;
 }
 
-void Rainer::init(int *ac, char **av) {
-  tact.init(ac, av); 
-}
-
 /* Fa que el robot es mogui fins que es troba a una distancia menor de th. */
 int Rainer::findObject(double vel, double th) {
   ArSensorReading *sensor;	

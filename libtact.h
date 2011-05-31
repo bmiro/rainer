@@ -36,8 +36,6 @@ private:
   
   double *sonarWeight;
   double *behaviourWeight;  
-
- // TactRainer() { };
   
 public:
   ArRobot ar; /* Robot de l'aria */

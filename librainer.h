@@ -21,9 +21,7 @@ public:
   double pblindTime, double pnumSonar, double pnumFirstSonar, double pnumLastSonar,
   double pslowVel, double pnormalVel, double *psonarWeight, double *pbehaviourWeight,
   time_t pTimeObstacledTh, double pDistObstacledTh, int pDlephantMem);
-    
-  void init(int *ac, char **av);
-   
+       
   void wander();
   int findObject(double vel, double th);
   void cleanArea(int xs, int zs, double ce, Coor robotCoor);
