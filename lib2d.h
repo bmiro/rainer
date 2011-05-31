@@ -5,7 +5,6 @@
 
 class Point2D {
   private:
-//     Point2D () { };
   public:
     double x;
     double y;
@@ -25,20 +24,21 @@ class Point2D {
     
 };
 
-// class Vect2D : public Point2D {
-//   private:
-//   public:    
-//     Vect2D ();
-//     Vect2D (double xx, double yy);
-//     Vect2D (double dx, double dy, double ox, double oy);
-//     
-//     /* Multiplicacio i divisió per escalar */
-//     Vect2D operator *(const double scalar);
-//     Vect2D operator /(const double scalar);
-//     
-//     Vect2D norm();
-//     double module();
-// 
-// };  
+class Vect2D : public Point2D {
+  private:
+  public:    
+    Vect2D ();
+    Vect2D (double xx, double yy);
+    Vect2D (Point2D dp, Point2D op);
+    Vect2D (double dx, double dy, double ox, double oy);
+    
+    /* Multiplicacio i divisió per escalar */
+    Vect2D operator *(const double scalar);
+    Vect2D operator /(const double scalar);
+    
+    Vect2D norm();
+    double module();
+
+};  
 
 #endif

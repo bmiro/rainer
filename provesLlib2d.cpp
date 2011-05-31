@@ -14,5 +14,16 @@ int main(int argc, char **argv) {
   printf("p4(%f, %f)\n", p4.x, p4.y);
   p4 += p1;
   printf("p4(%f, %f)\n", p4.x, p4.y);
+  
+  Vect2D v(p2, p1);
+  printf("v(%f, %f)\n", v.x, v.y);
+  v += v;
+  printf("v(%f, %f)\n", v.x, v.y);
+  v = v * 4.0;
+  printf("v(%f, %f)\n", v.x, v.y);
+  printf("|v| %f)\n", v.module());
+  v = v.norm();
+  printf("v(%f, %f)\n", v.x, v.y);
+  printf("|v| %f)\n", v.module());
 
 }
