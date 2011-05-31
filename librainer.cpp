@@ -1,8 +1,9 @@
 #include "librainer.h"
 
-Rainer::Rainer(double pthHeading, double pthOnPoint, double pmaxDist, double pimpactDist,
+Rainer::  Rainer(double pthHeading, double pthOnPoint, double pmaxDist, double pimpactDist,
   double pblindTime, double pnumSonarFront, double pnumFirstSonar, double pnumLastSonar,
-  double pslowVel, double pnormalVel, double *psonarWeight, double *pbehaviourWeight) {
+  double pslowVel, double pnormalVel, double *psonarWeight, double *pbehaviourWeight,
+  time_t pTimeObstacledTh, double pDistObstacledTh, int pDlephantMem) {
   
   thHeading = pthHeading;
   thOnPoint = pthOnPoint;
@@ -17,6 +18,10 @@ Rainer::Rainer(double pthHeading, double pthOnPoint, double pmaxDist, double pim
   
   normalVel = pnormalVel;
   slowVel = pslowVel;
+  
+  timeObstacledTh = pTimeObstacledTh;
+  distObstacledTh = pDistObstacledTh;
+  elephantMem = pDlephantMem;
   
   sonarWeight = new double[(int)pnumSonarFront];
   behaviourWeight = new double[2];
@@ -169,7 +174,7 @@ bool Rainer::goGoal(Point2D pnt) {
   bool canAccess;
    /* Vector Repulsio Obstacle, Vector Atraccio objectiu, Vector Director */
   Vect2D vro, va, vd;
-  //Trace trace (ELEPHANT_MEMORY, OBSTACLED_TH_DISTANCE, OBSTACLED_TH_TIME);
+  Trace trace (elephantMem, distObstacledTh, timeObstacledTh);
 
   d = DBL_MAX;
   canAccess = true;
@@ -206,11 +211,11 @@ bool Rainer::goGoal(Point2D pnt) {
 
     ar.setVel(vel);
     ArUtil::sleep(blindTime);
-    //Point2D hereP;
-    //hereP.x = ar.getX();
-    //hereP.y = ar.getY();
-    //trace.add(hereP);
-    canAccess = true;//not trace.isInnaccessible();   
+    Point2D hereP;
+    hereP.x = ar.getX();
+    hereP.y = ar.getY();
+    trace.add(hereP);
+    canAccess = not trace.isInnaccessible();   
   }
   return canAccess;
 }

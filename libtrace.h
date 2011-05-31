@@ -4,16 +4,20 @@
 #include <time.h> 
 #include "lib2d.h"
 
+#include <math.h>
+
 class Trace {
 private:
-  
   struct traceItem {
     time_t t;
     Point2D p;
   };
-  
+  traceItem *t;
+
+  int lastIn;
+
   int memSize;
-  double distanceth;
+  double distanceTh;
   time_t timeTh;
   
   Trace () { };

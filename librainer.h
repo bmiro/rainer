@@ -35,6 +35,10 @@ private:
 	double slowVel;
   double normalVel;
   
+  time_t timeObstacledTh;
+  double distObstacledTh;
+  int elephantMem;
+  
   double *sonarWeight;
   double *behaviourWeight;
   
@@ -48,7 +52,8 @@ public:
   
   Rainer(double pthHeading, double pthOnPoint, double pmaxDist, double pimpactDist,
   double pblindTime, double pnumSonarFront, double pnumFirstSonar, double pnumLastSonar,
-  double pslowVel, double pnormalVel, double *psonarWeight, double *pbehaviourWeight);
+  double pslowVel, double pnormalVel, double *psonarWeight, double *pbehaviourWeight,
+  time_t pTimeObstacledTh, double pDistObstacledTh, int pDlephantMem);
   
   int initArRobot(int *argc, char **argv);
   
