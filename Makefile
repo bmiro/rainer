@@ -2,7 +2,7 @@ all: libs
 	g++ -c rainer.cpp -I/usr/local/Aria/include
 	g++ *.o -o rainer -L/usr/local/Aria/lib/ -fabi-version=1 -lrt -Llib -lAria -lpthread -ldl -Xlinker -Bstatic -lstdc++ -Xlinker -Bdynamic
 
-libs: librainer librainermap libtrace
+libs: librainer librainermap libtrace lib2d
 
 librainer:
 	g++ -c librainer.cpp -I/usr/local/Aria/include
@@ -12,6 +12,13 @@ librainermap:
 
 libtrace:
 	g++ -c libtrace.cpp 
+
+lib2d:
+	g++ -c lib2d.cpp
+
+provalib2d: lib2d
+	g++ -c provesLlib2d.cpp
+	g++ lib2d. provesLlib2d.o -o l2d
 
 wander:
 	g++ -c wander.cpp -I/usr/local/Aria/include

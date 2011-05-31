@@ -13,6 +13,8 @@
 #define BH_GOAL 0
 #define BH_OBSTACLE 1
 
+#define CALC_MOD_VOBS(md, d) ((md - d)/md)
+
 //TODO passar a fitxer de configuració
 #define ELEPHANT_MEMORY 5
 #define OBSTACLED_TH_DISTANCE 50.0

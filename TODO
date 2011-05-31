@@ -1,0 +1,11 @@
+Revisar si funciona obstacleRepulsion
+Escriure recorregut per el mala (nextCell)
+Deteccio que el punt es innaccessible
+    Perqhe hi ha un overflow
+Implementar Dr i parametres al config
+Afinament de parametres
+librainer -> nomes funcions estrategic
+libtact -> el que es librainer - cleanArea
+    rainer.cleanArea
+    rainer.tact.goGoal
+Punt2D i vect2D a classe i oprecions (* += norm...)

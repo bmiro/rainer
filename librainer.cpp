@@ -49,71 +49,42 @@ int Rainer::initArRobot(int *argc, char **argv) {
 }
 
 Vect2D Rainer::goalAttraction(Point2D goal) {
-    double vx, vy, d, d2;
-    Vect2D va; /* vector atracció */
-    
-    d = ArMath::distanceBetween(ar.getX(), ar.getY(), goal.x, goal.y);
-    vx = goal.x - ar.getX();
-    vy = goal.y - ar.getY();
-        
-    va.x = vx / d;
-    va.y = vy / d;
-    
-    return va;
+    Vect2D va(ar.getX(), ar.getY(), goal.x, goal.y)
+    return va.norm();   
   }
 
 Vect2D Rainer::obstacleRepulsion(double th, double th_dmin, bool *impactAlert) {
+  double mod_vObs [numSensor];
+  double di = 0.0;
+  Vect2D vObs [numSensor];
+  Vect2D vRep (0.0, 0.0);
   ArSensorReading *sensor;
-  double vx, vy, vux, vuy, xObs, yObs, xRob, yRob, modV;
-  double d;
-  double dmin = DBL_MAX;
-  Vect2D vr;
-    
-  vr.x = 0.0;
-  vr.y = 0.0;
   
-  xRob = ar.getX();
-  yRob = ar.getY();
-  
-  for (int i = numFirstSonar; i < numLastSonar; i++) {
+  for (int i = firstSensor; i <= lastSensor; i++) {
     sensor = ar.getSonarReading(i);
-    xObs = sensor->getX();
-    yObs = sensor->getY(); 
-    vx = xObs - xRob; 
-    vy = yObs - yRob;
-    d = ArMath::distanceBetween(xRob, yRob, xObs, yObs);
-    
-    if (d < dmin) {
-      dmin = d;
+    di = sensor.getRange();
+    if (di < th) {
+      vObs[i].setXY(s.getSonarDX, s.getSonarDY);
+      mod_vObs[i] = CALC_MOD_VOBS(maxDist, di);
+    } else {
+      vObs[i].setZero();
+      mod_vObs[i] = 0.0;
     }
-    
-    if (d < th) {
-      modV = (th - d) / th;
-      /* Normalitzam el vector generat per aquest sensor */
-      vux = vx / modV; //TODO alerta possible divisió per 0 que ha de ser controlada
-      vuy = vy / modV;
-      /* Poderam i acumulam al vector de repulsió */
-      vr.x += sonarWeight[i] * vx;
-      vr.y += sonarWeight[i] * vy;
-    }
+    vObs += sonarWeight[i] * vRep[i];
   }
-  /* Feim que sigui un vector negatiu */
-  vr.x *= -1;
-  vr.y *= -1;
-
+  
   *impactAlert = (dmin < th_dmin);
 
-  return vr;
+  return vObs.norm();
 }
 
 /* Fa que el robot es mogui fins que es troba a una distancia menor de th. */
 int Rainer::findObject(double vel, double th) {
   ArSensorReading *sensor;	
   double xRob, yRob, xObs, yObs, d;
-
-  ar.setVel(vel); 
   
-  while (1) {
+  ar.setVel(vel); 
+  while (true) {
     xRob = ar.getX();
     yRob = ar.getY(); 
     for (int i = numFirstSonar; i < numLastSonar; i++) {
@@ -176,9 +147,7 @@ bool Rainer::goGoal(Point2D pnt) {
   Point2D hereP;
    /* Vector Repulsio Obstacle, Vector Atraccio objectiu, Vector Director */
   Vect2D vro, va, vd;
-  
-  printf("ggDth: %f", distObstacledTh);
-  
+    
   Trace trace (elephantMem, distObstacledTh, timeObstacledTh);
 
   d = DBL_MAX;
@@ -186,24 +155,19 @@ bool Rainer::goGoal(Point2D pnt) {
   while ((d >= thOnPoint) and canAccess) {
     d = ArMath::distanceBetween(ar.getX(), ar.getY(), pnt.x, pnt.y);
     
-    //printf("GoGoal: %f-%f\n", ar.getX(), ar.getY());
-    
     vro = obstacleRepulsion(maxDist, impactDist, &impactAlert);
     va = goalAttraction(pnt);
-    
-    printf("VRO: %f %f\n", vro.x, vro.y);
-    printf("VA: %f %f\n", va.x, va.y);
     
     if (impactAlert) {
       /* Col.lisió imminent, sols tenim amb compte el vector de repulsió*/
       vd.x = vro.x;
       vd.y = vro.y;
       vel = slowVel;
-      printf("Colisio imminet!!\n");
+      printf("Alerta de col.lisió imminet!!\n");
     } else {
       /* Recalculam el vector director del moviment del robot */
-      vd.x = behaviourWeight[BH_GOAL] * va.x + behaviourWeight[BH_OBSTACLE] * vro.x;
-      vd.y = behaviourWeight[BH_GOAL] * va.y + behaviourWeight[BH_OBSTACLE] * vro.y;
+      vd = va * behaviourWeight[BH_GOAL] + vro * behaviourWeight[BH_OBSTACLE];
+      
       vel = normalVel;
     }
     
@@ -217,9 +181,11 @@ bool Rainer::goGoal(Point2D pnt) {
     ar.setVel(vel);
     ArUtil::sleep(blindTime);
 
-    hereP.x = ar.getX();
-    hereP.y = ar.getY();
-    trace.add(hereP);
+    if (!vro.isZero()) {
+      hereP.setXY(ar.getX(), ar.getY());
+      trace.add(hereP);
+    }
+    
     canAccess = not trace.isInnaccessible();   
   }
   return canAccess;
