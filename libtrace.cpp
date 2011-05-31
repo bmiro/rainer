@@ -16,9 +16,11 @@ bool Trace::isInnaccessible() {
   int meanTime;
   int meanDist;
   int total;
-  
+  int k;
+
   printf("isInnaDth: %f\n", distanceTh);
 
+  total = 0;
   for (int i = 0; i < memSize; i++) {
     total += i;
   }
@@ -26,21 +28,21 @@ bool Trace::isInnaccessible() {
   double dists[total]; 
   
   // Calulam distancia punt a punt i totes les possibilitats (memSize-1)^2
-  int k = 0;
-  for (int i = 0; i < memSize; i++) {
-    for (int j = 0; j < memSize; j++) {
-      if (i != j) {
-        dists[k] = sqrt(pow((t[i].p.x - t[j].p.x),2) + pow((t[i].p.y - t[j].p.y),2));
-        k++;
-      }
+  k = 0;
+  for (int i = 0; i < memSize -1; i++) {
+    for (int j = i+1; j < memSize; j++) {
+      dists[k] = sqrt(pow((t[i].p.x - t[j].p.x),2) + pow((t[i].p.y - t[j].p.y),2));
+      k++;
     }
   }
   
-  for (;k+1; k--) {
+  printf("total %d, k %d", total, k);
+  
+  for (k = 0; k < total; k++) {
     meanDist += dists[k];
   }
     
-  meanDist /= pow(memSize-1, 2);
+  //meanDist /= pow(memSize-1, 2);
   
   printf("meanDist: %f TH: %f\n", meanDist, distanceTh);
     
@@ -54,6 +56,8 @@ bool Trace::reset() {
 }
 
 bool Trace::add(Point2D p) {
+  
+  //TODO nomes ficar si ha passat thershold de temps
   if (lastIn < memSize -1) {
     lastIn++;
   } else {
