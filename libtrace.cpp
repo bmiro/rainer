@@ -37,6 +37,8 @@ bool Trace::isInnaccessible() {
     
   meanDist /= pow(memSize-1, 2);
   
+  printf("meanDist: %f TH: %f\n", meanDist, distanceTh);
+    
   return meanDist < distanceTh;
 }
 
@@ -52,6 +54,8 @@ bool Trace::add(Point2D p) {
   } else {
     lastIn = 0;
   }
+  
+  printf("Ins: %f,%f\n", p.x, p.y);
   
   t[lastIn].p = p;
   t[lastIn].t = time(NULL);

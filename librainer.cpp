@@ -214,6 +214,7 @@ bool Rainer::goGoal(Point2D pnt) {
     Point2D hereP;
     hereP.x = ar.getX();
     hereP.y = ar.getY();
+    puts("Here!");
     trace.add(hereP);
     canAccess = not trace.isInnaccessible();   
   }

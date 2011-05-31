@@ -2,9 +2,10 @@
 #define LIBTRACE_H
 
 #include <time.h> 
-#include "lib2d.h"
-
 #include <math.h>
+#include <stdio.h>
+
+#include "lib2d.h"
 
 class Trace {
 private:
