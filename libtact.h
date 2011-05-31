@@ -1,8 +1,7 @@
 #ifndef LIBTACTRAINER_H
 #define LIBTACTRAINER_H
 
-#include <float.h>
-
+#include <math.h>
 #include "Aria.h"
 
 #include "common_rainer.h"
@@ -36,16 +35,14 @@ private:
   int elephantMem;
   
   double *sonarWeight;
-  double *behaviourWeight;
-  
-  Vect2D goalAttraction(Point2D goal);
-  Vect2D obstacleRepulsion(double th, double th_dmin, bool *impactAlert);
-   
-  //TactRainer() { };
+  double *behaviourWeight;  
+
+ // TactRainer() { };
   
 public:
   ArRobot ar; /* Robot de l'aria */
   
+  TactRainer();
   TactRainer(double pthHeading, double pthOnPoint, double pmaxDist, double pimpactDist,
   double pblindTime, double pnumSonar, double pnumFirstSonar, double pnumLastSonar,
   double pslowVel, double pnormalVel, double *psonarWeight, double *pbehaviourWeight,
@@ -53,6 +50,23 @@ public:
   
   int init(int *argc, char **argv);
  
+  double getThHeading(double alpha);
+  double getThOnPoint();
+  double getMaxDist();
+  double getImpactDist();
+  
+  double getBlindTime();
+  
+  int getNumSonar();
+  int getNumFirstSonar();
+  int getNumLastSonar();
+  
+  double getSlowVel();
+  double getNormalVel();
+  
+  Vect2D goalAttraction(Point2D goal);
+  Vect2D obstacleRepulsion(double th, double th_dmin, bool *impactAlert);
+  
   bool goGoal(Point2D pnt);
 };
 #endif

@@ -10,11 +10,11 @@ Rainer::Rainer(double pthHeading, double pthOnPoint, double pmaxDist, double pim
                   pslowVel, pnormalVel, psonarWeight, pbehaviourWeight,
                   pTimeObstacledTh, pDistObstacledTh, pDlephantMem);
                   
-  exec = tact.&ar;
+  exec = &tact.ar;
 }
 
-void Rainer::init(int *argc, char **argv) {
-  tact.initArRobot(argc, argv); 
+void Rainer::init(int *ac, char **av) {
+  tact.init(ac, av); 
 }
 
 /* Fa que el robot es mogui fins que es troba a una distancia menor de th. */
@@ -22,17 +22,17 @@ int Rainer::findObject(double vel, double th) {
   ArSensorReading *sensor;	
   double xRob, yRob, xObs, yObs, d;
   
-  ar.setVel(vel); 
+  exec->setVel(vel); 
   while (true) {
-    xRob = ar.getX();
-    yRob = ar.getY(); 
-    for (int i = numFirstSonar; i < numLastSonar; i++) {
-      sensor = ar.getSonarReading(i);
+    xRob = exec->getX();
+    yRob = exec->getY(); 
+    for (int i = tact.getNumFirstSonar(); i < tact.getNumLastSonar(); i++) {
+      sensor = exec->getSonarReading(i);
       xObs = sensor->getX();
       yObs = sensor->getY(); 
       d = ArMath::distanceBetween(xRob, yRob, xObs, yObs);
       if (d < th) {
-        ar.setVel(0); 
+        exec->setVel(0); 
         return 1;
       }
     }
@@ -49,11 +49,11 @@ void Rainer::wander() {
   Vect2D vro;
 
   Aria::setKeyHandler(&keyHandler);
-  ar.attachKeyHandler(&keyHandler);
+  exec->attachKeyHandler(&keyHandler);
 
-  vel = normalVel;
-  th = maxDist;
-  th_dmin = impactDist;
+  vel = tact.getNormalVel();
+  th = tact.getMaxDist();
+  th_dmin = tact.getImpactDist();
 
   alpha = 0.0;
 
@@ -62,13 +62,13 @@ void Rainer::wander() {
     findObject(vel, th);  
 
     //Calculam el vector de repulsió i l'angle de gir
-    vro = obstacleRepulsion(th, th_dmin, &impactAlert);
+    vro = tact.obstacleRepulsion(th, th_dmin, &impactAlert);
     alpha = ArMath::atan2(vro.y, vro.x);
 
     //Orientam el robot cap a la direcció que ha de seguir		
-    ar.setHeading(alpha);
-    while (!ar.isHeadingDone(thHeading)) {
-      ar.setVel(0);
+    exec->setHeading(alpha);
+    while (!exec->isHeadingDone(tact.getThHeading(alpha))) {
+      exec->setVel(0);
     }
   }
 }
@@ -77,8 +77,8 @@ void Rainer::cleanArea(int xs, int ys, double ce, Coor robotCoor) {
   Point2D robotPoint, p;
   Coor c;
 
-  robotPoint.x = ar.getX();
-  robotPoint.y = ar.getY();
+  robotPoint.x = exec->getX();
+  robotPoint.y = exec->getY();
   
   RainerMap mp(xs, ys, ce, robotCoor, robotPoint); 
   mp.printMap();
@@ -87,7 +87,7 @@ void Rainer::cleanArea(int xs, int ys, double ce, Coor robotCoor) {
     c = mp.getNextPos(CLEAN);
     p = mp.getRealXY(c);
     printf("\nVaig al punt real: %f-%f\n", p.x, p.y);
-    goGoal(p);
+    tact.goGoal(p);
     mp.mark(c, CLEAN);
     mp.setRobotPos(c);
     mp.printMap();

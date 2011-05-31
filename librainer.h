@@ -1,32 +1,31 @@
 #ifndef LIBRAINER_H
 #define LIBRAINER_H
 
-#include <float.h>
-
+#include <math.h>
 #include "Aria.h"
 
 #include "common_rainer.h"
 #include "lib2d.h"
+#include "libtact.h"
 #include "libtrace.h"
 #include "librainermap.h"
-#include "libtactrainer.h"
 
 class Rainer {
-private:   
-  //Rainer() { };
+private: 
   
 public:
-  TactRainer tact; /* Robot de l'aria */
-  ArRobot *exec;
+  TactRainer tact; /* Accés a nivell tàctic */
+  ArRobot *exec; /* Acceés al nivell executiu (punter a ArRobot) */
   
   Rainer(double pthHeading, double pthOnPoint, double pmaxDist, double pimpactDist,
   double pblindTime, double pnumSonar, double pnumFirstSonar, double pnumLastSonar,
   double pslowVel, double pnormalVel, double *psonarWeight, double *pbehaviourWeight,
   time_t pTimeObstacledTh, double pDistObstacledTh, int pDlephantMem);
     
-  int findObject(double vel, double th); 
+  void init(int *ac, char **av);
+   
   void wander();
-
+  int findObject(double vel, double th);
   void cleanArea(int xs, int zs, double ce, Coor robotCoor);
    
 };

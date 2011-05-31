@@ -1,4 +1,4 @@
-#include "libtactrainer.h"
+#include "libtact.h"
 
 TactRainer::TactRainer(double pthHeading, double pthOnPoint, double pmaxDist, double pimpactDist,
   double pblindTime, double pnumSonar, double pnumFirstSonar, double pnumLastSonar,
@@ -82,6 +82,43 @@ Vect2D TactRainer::obstacleRepulsion(double th, double th_dmin, bool *impactAler
   *impactAlert = (dmin < th_dmin);
 
   return vRep.norm();
+}
+
+double TactRainer::getThHeading(double alpha) {
+  return thHeading; //TODO en funcio de alpha
+}
+
+double TactRainer::getThOnPoint() {
+  return thOnPoint;
+}
+double TactRainer::getMaxDist() {
+  return maxDist;
+}
+
+double TactRainer::getImpactDist() {
+  return impactDist;
+}
+
+double TactRainer::getBlindTime() {
+  return blindTime;
+}
+
+int TactRainer::getNumSonar() {
+  return numSonar;
+}
+
+int TactRainer::getNumFirstSonar() {
+  return numFirstSonar;
+}
+int TactRainer::getNumLastSonar() {
+  return numLastSonar;
+}
+
+double TactRainer::getSlowVel() {
+  return slowVel;
+}
+double TactRainer::getNormalVel() {
+  return normalVel;
 }
 
 /* Fa que el robot vagi al punt pnt evitant els obstaques que troba. 
