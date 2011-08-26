@@ -4,12 +4,12 @@ Rainer::Rainer(double pthHeading, double pthOnPoint, double pmaxDist, double pim
   double pblindTime, double pnumSonar, double pnumFirstSonar, double pnumLastSonar,
   double pslowVel, double pnormalVel, double *psonarWeight, double *pbehaviourWeight,
   time_t pTimeObstacledTh, double pDistObstacledTh, int pDlephantMem) {
-  
+
   TactRainer tact(pthHeading, pthOnPoint, pmaxDist, pimpactDist,
                   pblindTime, pnumSonar, pnumFirstSonar, pnumLastSonar,
                   pslowVel, pnormalVel, psonarWeight, pbehaviourWeight,
                   pTimeObstacledTh, pDistObstacledTh, pDlephantMem);
-                  
+
   exec = &tact.ar;
 }
 

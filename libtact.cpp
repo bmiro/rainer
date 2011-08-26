@@ -28,12 +28,21 @@ TactRainer::TactRainer(double pthHeading, double pthOnPoint, double pmaxDist, do
   behaviourWeight = new double[2];
   
   sonarWeight = psonarWeight;
+
   behaviourWeight = pbehaviourWeight;
+  
 }
 
 int TactRainer::init(int *argc, char **argv) {
   Aria::init();
-  puts("111111111");
+  
+  printf("TactInit!\n");
+  
+  for (int i = 0; i < 4; i++) {
+    printf("%f\n", sonarWeight[i]);
+  }
+  
+  
   ArSimpleConnector connector(argc, argv);
   if (!connector.parseArgs() || *argc > 1) {
     connector.logOptions();
@@ -44,6 +53,7 @@ int TactRainer::init(int *argc, char **argv) {
     Aria::shutdown();
     return 1;
   }
+ 
   ar.comInt(ArCommands::SOUNDTOG, 1);
   ar.comInt(ArCommands::ENABLE, 1); //Habilitar els motors
   ar.runAsync(false);
@@ -78,11 +88,12 @@ Vect2D TactRainer::obstacleRepulsion(double th, double th_dmin, bool *impactAler
       vObs[i].setZero();
       mod_vObs[i] = 0.0;
     }
+        
     vRep += vObs[i] * sonarWeight[i];
   }
   
   *impactAlert = (dmin < th_dmin);
-
+  
   return vRep.norm();
 }
 
@@ -137,14 +148,25 @@ bool TactRainer::goGoal(Point2D pnt) {
    /* Vector Repulsio Obstacle, Vector Atraccio objectiu, Vector Director */
   Vect2D vro, va, vd;
     
-  Trace trace (elephantMem, distObstacledTh, timeObstacledTh);
+  //Trace trace (elephantMem, distObstacledTh, timeObstacledTh); // TODO
 
+  printf("Vaig al punt %f, %f\n", pnt.x, pnt.y);
+  
   d = DBL_MAX;
   canAccess = true;
   while ((d >= thOnPoint) and canAccess) {
+    
+    printf("aaaaaaaaaaa");
+    
     d = ArMath::distanceBetween(ar.getX(), ar.getY(), pnt.x, pnt.y);
     
+    printf("bbbbbbbbb");
+
+    
     vro = obstacleRepulsion(maxDist, impactDist, &impactAlert);
+    
+    printf("ccccccccc");
+    
     va = goalAttraction(pnt);
     
     if (impactAlert) {
@@ -160,6 +182,8 @@ bool TactRainer::goGoal(Point2D pnt) {
       vel = normalVel;
     }
     
+    printf("zzzzzzzzzzzzzzzzzzz");
+    
     alpha = ArMath::atan2(vd.y, vd.x);
         
     ar.setHeading(alpha);
@@ -172,10 +196,10 @@ bool TactRainer::goGoal(Point2D pnt) {
 
     if (!vro.isZero()) {
       hereP.setXY(ar.getX(), ar.getY());
-      trace.add(hereP);
+      //trace.add(hereP);// TODO
     }
     
-    canAccess = not trace.isInnaccessible();   
+    //canAccess = not trace.isInnaccessible(); // TODO   
   }
   return canAccess;
 }
