@@ -60,16 +60,16 @@ bool Trace::isInnaccessible() {
   printf("meanDist: %f TH: %f\n", meanDist, distanceTh);
   
   return false;
-  return meanDist < distanceTh;
+  //return meanDist < distanceTh; //TODO
 }
 
-bool Trace::reset() {
+void Trace::reset() {
   for (int i = 0; i < memSize; i++) {
     t[i].t = 0;
   }
 }
 
-bool Trace::add(Point2D p) {
+void Trace::add(Point2D p) {
   
   //TODO nomes ficar si ha passat thershold de temps
   if (lastIn < memSize -1) {

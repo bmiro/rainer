@@ -19,6 +19,7 @@ using namespace std;
 double sonarWeight [N_FRONT_SONARS];
 double behaviorWeight [BEHAVIOR_FATORS];
 
+/* Rutina local per la lectura dels paràmetres del fitxer */
 bool loadGlobalParams(string filename) {
   string line, id, value;
   char key[MAX_PARAM_LINE];
@@ -67,10 +68,17 @@ int main(int argc, char **argv) {
                 param["slowVel"], param["normalVel"], sonarWeight, behaviorWeight,
                 param["timeObstacledTh"], param["distObstacledTh"], param["elephantMem"]);                
                 
-  Point2D punts[] = {{0.0, 0.0}, {0.0, 5000.0}, {5000.0, 0.0}, {5000.0, 5000.0}};
+  Point2D punts[4];
+  punts[0].setXY(0.0, 0.0);
+  punts[1].setXY(0.0, 5000.0);
+  punts[2].setXY(5000.0, 0.0);
+  punts[3].setXY(5000.0, 5000.0);
 
+  cout << "Hola here\n";
+  
   rainer.tact.init(&argc, argv);
   while (rainer.exec->isRunning()) {
+    cout << "Hola there\n";
     //rainer.cleanArea(param["areaXsize"], param["areaYsize"], param["cellEdge"], cr);
     rainer.tact.goGoal(punts[1]);
     rainer.tact.goGoal(punts[2]);

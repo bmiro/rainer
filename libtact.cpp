@@ -33,6 +33,7 @@ TactRainer::TactRainer(double pthHeading, double pthOnPoint, double pmaxDist, do
 
 int TactRainer::init(int *argc, char **argv) {
   Aria::init();
+  puts("111111111");
   ArSimpleConnector connector(argc, argv);
   if (!connector.parseArgs() || *argc > 1) {
     connector.logOptions();

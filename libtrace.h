@@ -27,8 +27,8 @@ public:
   Trace(int pMemSize, double pDistanceTh, time_t pTimeTh);
   
   bool isInnaccessible();
-  bool reset();
-  bool add(Point2D p);
+  void reset();
+  void add(Point2D p);
 
 };
 #endif

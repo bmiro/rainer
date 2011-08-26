@@ -31,16 +31,19 @@ bool Point2D::operator ==(const Point2D& pt) {
 Point2D& Point2D::operator =(const Point2D& pt) {
   x = pt.x;
   y = pt.y;
+  return *this;
 }
 
 Point2D& Point2D::operator +=(const Point2D& pt) {
   x += pt.x;
   y += pt.y;
+  return *this;
 }
 
 Point2D& Point2D::operator -=(const Point2D& pt) {
   x -= pt.x;
   y -= pt.y;
+  return *this;
 }
 
 Point2D Point2D::operator +(const Point2D pt) {
@@ -81,6 +84,7 @@ Vect2D::Vect2D (double dx, double dy, double ox, double oy) {
 Vect2D& Vect2D::operator =(const Vect2D& vec) {
   x = vec.x;
   y = vec.y;
+  return *this;
 }
 
 Vect2D Vect2D::operator +(const Vect2D vec) {

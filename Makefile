@@ -1,6 +1,6 @@
 all: libs
 	g++ -c rainer.cpp -I/usr/local/Aria/include -Wall 
-	g++ libtact.o librainermap.o libtrace.o librainer.o lib2d.o rainer.o -o rainer -L/usr/local/Aria/lib/ -lrt -Llib -lAria -lpthread -ldl -Xlinker -Bstatic -lstdc++ -Xlinker -Bdynamic -Wall 
+	g++ libtact.o librainermap.o libtrace.o librainer.o lib2d.o rainer.o -o rainer -L/usr/local/Aria/lib/ -lrt -Llib -lAria -lpthread -ldl -Xlinker -Bstatic -lstdc++ -std=gnu++0x -Xlinker -Bdynamic -Wall 
 
 libs: libtact librainer librainermap libtrace lib2d 
 
