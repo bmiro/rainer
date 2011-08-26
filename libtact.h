@@ -2,6 +2,11 @@
 #define LIBTACTRAINER_H
 
 #include <math.h>
+#include <map>
+#include <string>
+#include <fstream>
+#include <iostream>
+
 #include "Aria.h"
 
 #include "common_rainer.h"
@@ -15,6 +20,8 @@
 
 class TactRainer {
 private:
+   bool loadGlobalParams(string filename);
+  
   /* Paràmetres del robot*/
   double thHeading;
   double thOnPoint;
@@ -37,14 +44,13 @@ private:
   double *sonarWeight;
   double *behaviourWeight;  
   
+  map<string, double> param;
+  
 public:
   ArRobot ar; /* Robot de l'aria */
   
   //TactRainer();
-  TactRainer(double pthHeading=0.0, double pthOnPoint=0.0, double pmaxDist=0.0, double pimpactDist=0.0,
-  double pblindTime=0.0, double pnumSonar=0.0, double pnumFirstSonar=0.0, double pnumLastSonar=0.0,
-  double pslowVel=0.0, double pnormalVel=0.0, double *psonarWeight=NULL, double *pbehaviourWeight=NULL,
-  time_t pTimeObstacledTh=0, double pDistObstacledTh=0.0, int pDlephantMem=0);
+  TactRainer(string filename=FILE_PATH);
   
   int init(int *argc, char **argv);
  

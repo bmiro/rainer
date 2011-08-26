@@ -1,36 +1,66 @@
 #include "libtact.h"
 
-TactRainer::TactRainer(double pthHeading, double pthOnPoint, double pmaxDist, double pimpactDist,
-  double pblindTime, double pnumSonar, double pnumFirstSonar, double pnumLastSonar,
-  double pslowVel, double pnormalVel, double *psonarWeight, double *pbehaviourWeight,
-  time_t pTimeObstacledTh, double pDistObstacledTh, int pDlephantMem) {
+TactRainer::TactRainer(string filename) {
   
-  thHeading = pthHeading;
-  thOnPoint = pthOnPoint;
-  maxDist = pmaxDist;
-  impactDist = pimpactDist;
+  if (!loadGlobalParams(filename)) {
+    printf("No s'han pogut carregar els paràmetres de configuració.\n");
+    //return 1; Aixecar escepcio
+  }
   
-  blindTime = pblindTime;
+  thHeading = param["thHeading"];
+  thOnPoint = param["thOnPoint"];
+  maxDist = param["maxDist"];
+  impactDist = param["impactDist"];
   
-  numSonar = pnumSonar;
-  numFirstSonar = pnumFirstSonar;
-  numLastSonar = pnumLastSonar;
+  blindTime = param["blindTime"];
   
-  normalVel = pnormalVel;
-  slowVel = pslowVel;
+  numSonar = (int)param["numSonar"];
+  numFirstSonar = (int)param["numFirstSonar"];
+  numLastSonar = (int)param["numLastSonar"];
   
-  timeObstacledTh = pTimeObstacledTh;
-  distObstacledTh = pDistObstacledTh;
+  normalVel = param["normalVel"];
+  slowVel = param["slowVel"];
+  
+  timeObstacledTh = (time_t)param["timeObstacledTh"];
+  distObstacledTh = param["distObstacledTh"];
     
-  elephantMem = pDlephantMem;
+  elephantMem = (int)param["elephantMem"];
   
-  sonarWeight = new double[(int)numSonar];
+  sonarWeight = new double[numSonar];
   behaviourWeight = new double[2];
   
-  sonarWeight = psonarWeight;
+}
 
-  behaviourWeight = pbehaviourWeight;
+/* Rutina local per la lectura dels paràmetres del fitxer */
+bool TactRainer::loadGlobalParams(string filename) {
+  string line, id, value;
+  char key[MAX_PARAM_LINE];
+  size_t pos;
   
+  ifstream f (filename.c_str());
+  
+  if (!f.is_open()) return false;
+  
+  while (f.good()) {
+    getline(f, line);
+    if (!line.empty()) {
+      pos = line.find(" ");
+      id = line.substr(0, pos);
+      value = line.substr(pos);
+      param[id] = strtod(value.c_str(), NULL);
+    }
+  }
+  f.close();
+  
+  for (int i = param["numFirstSonar"]; i < param["numLastSonar"]; i++) {
+    snprintf(key, sizeof(key), "%s%d", "weightSonar", i);
+    sonarWeight[i] = param[key];
+  }
+  
+  behaviourWeight[0] = param["weightGoalAttraction"];
+  behaviourWeight[1] = param["weightObstacleRepulsion"];
+  
+  return true;
 }
 
 int TactRainer::init(int *argc, char **argv) {
