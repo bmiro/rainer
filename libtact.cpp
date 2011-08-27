@@ -12,6 +12,7 @@ TactRainer::TactRainer(string filename) {
   }
   
   thHeading = param["thHeading"];
+  thHeadingObstacled = param["thHeadingObstacled"];
   thOnPoint = param["thOnPoint"];
   maxDist = param["maxDist"];
   impactDist = param["impactDist"];
@@ -27,6 +28,8 @@ TactRainer::TactRainer(string filename) {
   
   timeObstacledTh = (time_t)param["timeObstacledTh"];
   distObstacledTh = param["distObstacledTh"];
+  
+  dr = param["dr"];
     
   elephantMem = (int)param["elephantMem"];
   
@@ -101,6 +104,7 @@ Vect2D TactRainer::goalAttraction(Point2D goal) {
 Vect2D TactRainer::obstacleRepulsion(double th, double th_dmin, bool *impactAlert) {
   double mod_vObs [numSonar]; //TODO revisar perque s'ha de emprar
   double di = 0.0;
+  int nearSens; /* Sensor que ha detectat distància mínima */
   double dmin = DBL_MAX;
   Vect2D vObs [numSonar]; 
   Vect2D vRep (0.0, 0.0);
@@ -115,16 +119,17 @@ Vect2D TactRainer::obstacleRepulsion(double th, double th_dmin, bool *impactAler
     //TODO tal vegada hauria de ser nomes un sensor frontal
     if (di < dmin) {
       dmin = di;
+      nearSens = i;
     }
 
     if (di < th) {
       vObs[i].setXY(sensor->getSensorDX(), sensor->getSensorDY());
+      vObs[i] *= -1;
       mod_vObs[i] = CALC_MOD_VOBS(maxDist, di);
        /* Convertim el vector en un que tingui el mòdul (maxdist - di)/ maxdist */
       vObs[i] = vObs[i].norm(mod_vObs[i]);
     } else {
       vObs[i].setZero();
-      printf("No hi ha obstacleeee!!! %f, %f\n", vObs[i].x, vObs[i].y);
     }
         
     vRep += vObs[i] * sonarWeight[i];
@@ -189,16 +194,24 @@ bool TactRainer::goGoal(Point2D pnt) {
     
   //Trace trace (elephantMem, distObstacledTh, timeObstacledTh); // TODO
 
-  printf("Vaig al punt (%f, %f)\n", pnt.x, pnt.y);
+  printf("M'encamin al punt (%f, %f)\n", pnt.x, pnt.y);
   
   d = DBL_MAX;
   canAccess = true;
   while ((d >= thOnPoint) and canAccess) { 
     
+    if (DEBUG) { /* El primer cop hi poden haver valors no calculats, don't worry */
+      printf("A distància %f (%f de llindar)\n", d, thOnPoint);
+      printf("(%f, %f) -> (%f, %f)\n", ar.getX(), ar.getY(), pnt.x, pnt.y);
+      printf("VA: (%f, %f)\n", va.x, va.y);
+      printf("VO: (%f, %f)\n", vro.x, vro.y);
+      printf("VD: (%f, %f)\n", vd.x, vd.y);
+      printf("alpha: %f\n\n", alpha);
+    }
+    
     d = ArMath::distanceBetween(ar.getX(), ar.getY(), pnt.x, pnt.y);
     
     va = goalAttraction(pnt);
-    
     vro = obstacleRepulsion(maxDist, impactDist, &impactAlert);
         
     if (impactAlert) {
@@ -212,21 +225,17 @@ bool TactRainer::goGoal(Point2D pnt) {
       vd = (va * behaviourWeight[BH_GOAL]) + (vro * behaviourWeight[BH_OBSTACLE]);
       vel = normalVel;
     }
-    
-    if (DEBUG) {
-      printf("A distància %f de l'objectiu (%f de llindar)\n", d, thOnPoint);
-      printf("Actualment sóc al punt (%f, %f)\n", ar.getX(), ar.getY());
-      printf("El meu vector atractor és (%f, %f)\n\n", va.x, va.y);
-      printf("El meu vector de repulsió és (%f, %f)\n\n", vro.x, vro.y);
-      printf("El meu vector director és (%f, %f)\n\n", vd.x, vd.y);
-    }
         
     alpha = ArMath::atan2(vd.y, vd.x);
-        
+    
     ar.setHeading(alpha);
-    while (!ar.isHeadingDone(thHeading)) {
-      ar.setVel(0);
-    }   
+    
+    /* Si la diferencia entre angles fos molt petita es faria sense avançar */
+    if (fabs(alpha) > dr) {
+      while (!ar.isHeadingDone(thHeading)) {
+	ar.setVel(0);
+      }
+    }
 
     ar.setVel(vel);
     ArUtil::sleep(blindTime);

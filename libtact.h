@@ -24,6 +24,8 @@ private:
   
   /* Paràmetres del robot*/
   double thHeading;
+  double thHeadingObstacled;
+  double dr;
   double thOnPoint;
   double maxDist;
   double impactDist;

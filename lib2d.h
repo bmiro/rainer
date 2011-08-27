@@ -20,6 +20,10 @@ class Point2D {
     Point2D& operator =(const Point2D& pt);
     Point2D& operator +=(const Point2D& pt);
     Point2D& operator -=(const Point2D& pt);
+    /* Producte i divisió escalar */
+    Point2D& operator *=(double s);
+    Point2D& operator /=(double s);
+    
     Point2D operator +(const Point2D pt);
     Point2D operator -(const Point2D pt);
     
@@ -36,6 +40,11 @@ class Vect2D : public Point2D {
     Vect2D& operator =(const Vect2D& vec);
     Vect2D operator +(const Vect2D vec);
     Vect2D operator -(const Vect2D vec);
+    Vect2D& operator +=(const Vect2D& pt);
+    Vect2D& operator -=(const Vect2D& pt);
+    /* Producte i divisió escalar */
+    Vect2D& operator *=(double s);
+    Vect2D& operator /=(double s);
 
     /* Multiplicacio i divisió per escalar */
     Vect2D operator *(const double scalar);

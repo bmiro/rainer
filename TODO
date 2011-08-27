@@ -1,4 +1,5 @@
 Revisar si funciona obstacleRepulsion
+Emprar sensors de darrere
 Escriure recorregut per el mala (nextCell)
 Deteccio que el punt es innaccessible
     Perqhe hi ha un overflow
@@ -8,4 +9,3 @@ librainer -> nomes funcions estrategic
 libtact -> el que es librainer - cleanArea
     rainer.cleanArea
     rainer.tact.goGoal
-Punt2D i vect2D a classe i oprecions (* += norm...)

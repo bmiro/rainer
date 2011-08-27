@@ -33,10 +33,10 @@ int main(int argc, char **argv) {
   rainer.tact.init(&argc, argv);
   while (rainer.tact.ar.isRunning()) { //TODO mes elegant amb un .exec->isRunning pero no rula joder ostia puta
     //rainer.cleanArea(param["areaXsize"], param["areaYsize"], param["cellEdge"], cr);
-    rainer.tact.goGoal(punts[3]);
+    rainer.tact.goGoal(punts[1]);
     rainer.tact.goGoal(punts[2]);
-    /*rainer.goGoal(punts[3]);
-    rainer.goGoal(punts[0]);*/
+    rainer.tact.goGoal(punts[3]);
+    rainer.tact.goGoal(punts[0]);
   }
 
   cout << "Goodbye!";

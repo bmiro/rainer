@@ -46,6 +46,19 @@ Point2D& Point2D::operator -=(const Point2D& pt) {
   return *this;
 }
 
+
+Point2D& Point2D::operator *=(double s) {
+  x *= s;
+  y *= s;
+  return *this;
+}
+
+Point2D& Point2D::operator /=(double s) {
+  x /= s;
+  y /= s;
+  return *this;
+}
+
 Point2D Point2D::operator +(const Point2D pt) {
   Point2D v;
   
@@ -103,7 +116,31 @@ Vect2D Vect2D::operator -(const Vect2D vec) {
   return v;
 }
 
-/* Multiplicacio i divisió per escalar */
+Vect2D& Vect2D::operator +=(const Vect2D& vec) {
+  x += vec.x;
+  y += vec.y;
+  return *this;
+}
+
+Vect2D& Vect2D::operator -=(const Vect2D& vec) {
+  x -= vec.x;
+  y -= vec.y;
+  return *this;
+}
+
+Vect2D& Vect2D::operator *=(double s) {
+  x *= s;
+  y *= s;
+  return *this;
+}
+
+Vect2D& Vect2D::operator /=(double s) {
+  x /= s;
+  y /= s;
+  return *this;
+}
+
+/* Multiplicacio i divisió per escalar generant nou vector */
 Vect2D Vect2D::operator *(const double scalar) {
   Vect2D v;
   
