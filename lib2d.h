@@ -42,6 +42,7 @@ class Vect2D : public Point2D {
     Vect2D operator /(const double scalar);
     
     Vect2D norm();
+    Vect2D norm(const double m);
     double module();
 
 };  

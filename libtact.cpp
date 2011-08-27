@@ -106,10 +106,13 @@ Vect2D TactRainer::obstacleRepulsion(double th, double th_dmin, bool *impactAler
   Vect2D vRep (0.0, 0.0);
   ArSensorReading *sensor;
   
+  //TODO tal vegada tambe incloure sensors de darrere numXXXRearSonar
   for (int i = numFirstSonar; i <= numLastSonar; i++) {
     sensor = ar.getSonarReading(i);
     di = (double)sensor->getRange();
     
+    /* Guarda la més petita de totes les distàncies */
+    //TODO tal vegada hauria de ser nomes un sensor frontal
     if (di < dmin) {
       dmin = di;
     }
@@ -117,9 +120,11 @@ Vect2D TactRainer::obstacleRepulsion(double th, double th_dmin, bool *impactAler
     if (di < th) {
       vObs[i].setXY(sensor->getSensorDX(), sensor->getSensorDY());
       mod_vObs[i] = CALC_MOD_VOBS(maxDist, di);
+       /* Convertim el vector en un que tingui el mòdul (maxdist - di)/ maxdist */
+      vObs[i] = vObs[i].norm(mod_vObs[i]);
     } else {
       vObs[i].setZero();
-      mod_vObs[i] = 0.0;
+      printf("No hi ha obstacleeee!!! %f, %f\n", vObs[i].x, vObs[i].y);
     }
         
     vRep += vObs[i] * sonarWeight[i];
@@ -127,7 +132,7 @@ Vect2D TactRainer::obstacleRepulsion(double th, double th_dmin, bool *impactAler
   
   *impactAlert = (dmin < th_dmin);
   
-  return vRep.norm();
+  return vRep.norm(); //TODO Es correcte normalitzar?
 }
 
 double TactRainer::getThHeading(double alpha) {
@@ -190,13 +195,6 @@ bool TactRainer::goGoal(Point2D pnt) {
   canAccess = true;
   while ((d >= thOnPoint) and canAccess) { 
     
-    if (DEBUG) {
-      printf("A distància %f de l'objectiu (%f de llindar)\n", d, thOnPoint);
-      printf("Actualment sóc al punt (%f, %f)\n", ar.getX(), ar.getY());
-      printf("El meu vector atractor és (%f, %f)\n\n", va.x, va.y);
-      printf("El meu vector director és (%f, %f)\n\n", vd.x, vd.y);
-    }
-    
     d = ArMath::distanceBetween(ar.getX(), ar.getY(), pnt.x, pnt.y);
     
     va = goalAttraction(pnt);
@@ -204,18 +202,23 @@ bool TactRainer::goGoal(Point2D pnt) {
     vro = obstacleRepulsion(maxDist, impactDist, &impactAlert);
         
     if (impactAlert) {
-      /* Col.lisió imminent, sols tenim amb compte el vector de repulsió*/
+      /* Col.lisió imminent, sols tenim amb compte el vector de repulsió */
       vd.x = vro.x;
       vd.y = vro.y;
       vel = slowVel;
       printf("Alerta de col.lisió imminet!!\n");
-    } else {
-      printf("bhw goal: %f bhw ob %f\n", behaviourWeight[BH_GOAL], behaviourWeight[BH_OBSTACLE]);
-      
-      
+    } else {      
       /* Recalculam el vector director del moviment del robot */
-      vd = (va * behaviourWeight[BH_GOAL]); //+ (vro * behaviourWeight[BH_OBSTACLE]);
+      vd = (va * behaviourWeight[BH_GOAL]) + (vro * behaviourWeight[BH_OBSTACLE]);
       vel = normalVel;
+    }
+    
+    if (DEBUG) {
+      printf("A distància %f de l'objectiu (%f de llindar)\n", d, thOnPoint);
+      printf("Actualment sóc al punt (%f, %f)\n", ar.getX(), ar.getY());
+      printf("El meu vector atractor és (%f, %f)\n\n", va.x, va.y);
+      printf("El meu vector de repulsió és (%f, %f)\n\n", vro.x, vro.y);
+      printf("El meu vector director és (%f, %f)\n\n", vd.x, vd.y);
     }
         
     alpha = ArMath::atan2(vd.y, vd.x);
@@ -228,6 +231,7 @@ bool TactRainer::goGoal(Point2D pnt) {
     ar.setVel(vel);
     ArUtil::sleep(blindTime);
 
+    /* Si esteim detectant algun obstacle memoritzam la posicio */
     if (!vro.isZero()) {
       hereP.setXY(ar.getX(), ar.getY());
       //trace.add(hereP);// TODO

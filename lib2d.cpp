@@ -125,6 +125,20 @@ double Vect2D::module() {
 }
 
 Vect2D Vect2D::norm() {
-  return *this/module();
+  if (module() != double(0)) {
+    return *this/module();
+  } else {
+    setZero();
+    return *this;
+  }
+}
+
+/* Normalitza a un mòdul concret */
+Vect2D Vect2D::norm(const double m) {
+  if (module() != double(0)) {
+    return (*this/module()) * m;
+  } else {
+    setZero();
+    return *this;
+  }
 }  
-  
