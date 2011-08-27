@@ -94,7 +94,7 @@ int TactRainer::init(int *argc, char **argv) {
 }
 
 Vect2D TactRainer::goalAttraction(Point2D goal) {
-  Vect2D va(ar.getX(), ar.getY(), goal.x, goal.y);
+  Vect2D va(goal.x, goal.y, ar.getX(), ar.getY());  
   return va.norm();   
 }
 
@@ -178,30 +178,31 @@ bool TactRainer::goGoal(Point2D pnt) {
   bool impactAlert;
   bool canAccess;
   Point2D hereP;
-   /* Vector Repulsio Obstacle, Vector Atraccio objectiu, Vector Director */
+  
+   /* Vector Repulsió Obstacle, Vector Atraccio objectiu, Vector Director */
   Vect2D vro, va, vd;
     
   //Trace trace (elephantMem, distObstacledTh, timeObstacledTh); // TODO
 
-  printf("Vaig al punt %f, %f\n", pnt.x, pnt.y);
+  printf("Vaig al punt (%f, %f)\n", pnt.x, pnt.y);
   
   d = DBL_MAX;
   canAccess = true;
-  while ((d >= thOnPoint) and canAccess) {
+  while ((d >= thOnPoint) and canAccess) { 
     
-    printf("aaaaaaaaaaa");
+    if (DEBUG) {
+      printf("A distància %f de l'objectiu (%f de llindar)\n", d, thOnPoint);
+      printf("Actualment sóc al punt (%f, %f)\n", ar.getX(), ar.getY());
+      printf("El meu vector atractor és (%f, %f)\n\n", va.x, va.y);
+      printf("El meu vector director és (%f, %f)\n\n", vd.x, vd.y);
+    }
     
     d = ArMath::distanceBetween(ar.getX(), ar.getY(), pnt.x, pnt.y);
     
-    printf("bbbbbbbbb");
-
-    
-    vro = obstacleRepulsion(maxDist, impactDist, &impactAlert);
-    
-    printf("ccccccccc");
-    
     va = goalAttraction(pnt);
     
+    vro = obstacleRepulsion(maxDist, impactDist, &impactAlert);
+        
     if (impactAlert) {
       /* Col.lisió imminent, sols tenim amb compte el vector de repulsió*/
       vd.x = vro.x;
@@ -209,14 +210,14 @@ bool TactRainer::goGoal(Point2D pnt) {
       vel = slowVel;
       printf("Alerta de col.lisió imminet!!\n");
     } else {
-      /* Recalculam el vector director del moviment del robot */
-      vd = (va * behaviourWeight[BH_GOAL]) + (vro * behaviourWeight[BH_OBSTACLE]);
+      printf("bhw goal: %f bhw ob %f\n", behaviourWeight[BH_GOAL], behaviourWeight[BH_OBSTACLE]);
       
+      
+      /* Recalculam el vector director del moviment del robot */
+      vd = (va * behaviourWeight[BH_GOAL]); //+ (vro * behaviourWeight[BH_OBSTACLE]);
       vel = normalVel;
     }
-    
-    printf("zzzzzzzzzzzzzzzzzzz");
-    
+        
     alpha = ArMath::atan2(vd.y, vd.x);
         
     ar.setHeading(alpha);

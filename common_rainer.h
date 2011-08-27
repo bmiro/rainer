@@ -12,6 +12,8 @@
 #define DELIM ' '
 #define COMMENT '#'
 
+#define DEBUG 1
+
 using namespace std;
 
 //map<string, double> param;
