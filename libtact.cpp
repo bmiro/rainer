@@ -2,9 +2,13 @@
 
 TactRainer::TactRainer(string filename) {
   
+  char key[MAX_PARAM_LINE];
+
   if (!loadGlobalParams(filename)) {
     printf("No s'han pogut carregar els paràmetres de configuració.\n");
     //return 1; Aixecar escepcio
+  } else {
+    printf("Parametres llegits del fitxer %s", (char *)filename.c_str());
   }
   
   thHeading = param["thHeading"];
@@ -29,12 +33,19 @@ TactRainer::TactRainer(string filename) {
   sonarWeight = new double[numSonar];
   behaviourWeight = new double[2];
   
+  for (int i = param["numFirstSonar"]; i < param["numLastSonar"]; i++) {
+    snprintf(key, sizeof(key), "%s%d", "weightSonar", i);
+    sonarWeight[i] = param[key];
+  }
+  
+  behaviourWeight[0] = param["weightGoalAttraction"];
+  behaviourWeight[1] = param["weightObstacleRepulsion"];
+    
 }
 
 /* Rutina local per la lectura dels paràmetres del fitxer */
 bool TactRainer::loadGlobalParams(string filename) {
   string line, id, value;
-  char key[MAX_PARAM_LINE];
   size_t pos;
   
   ifstream f (filename.c_str());
@@ -51,14 +62,6 @@ bool TactRainer::loadGlobalParams(string filename) {
     }
   }
   f.close();
-  
-  for (int i = param["numFirstSonar"]; i < param["numLastSonar"]; i++) {
-    snprintf(key, sizeof(key), "%s%d", "weightSonar", i);
-    sonarWeight[i] = param[key];
-  }
-  
-  behaviourWeight[0] = param["weightGoalAttraction"];
-  behaviourWeight[1] = param["weightObstacleRepulsion"];
   
   return true;
 }
