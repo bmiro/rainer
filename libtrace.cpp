@@ -19,7 +19,7 @@ bool Trace::isInnaccessible() {
   //int meanTime;
   double meanDist;
   int total;
-  int i,j ,k;
+  int i,j, k;
 
   return false;
 

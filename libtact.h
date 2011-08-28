@@ -34,6 +34,7 @@ private:
   
   int numSonar;
   int numFirstSonar;
+  int numLastFrontSonar;
   int numLastSonar;
   
   double slowVel;
@@ -73,6 +74,9 @@ public:
   Vect2D goalAttraction(Point2D goal);
   Vect2D obstacleRepulsion(double th, double th_dmin, bool *impactAlert);
   
+  int findObject(double vel, double th);
+  void wander();
+
   bool goGoal(Point2D pnt);
 };
 #endif

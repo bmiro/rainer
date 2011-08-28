@@ -21,6 +21,7 @@ TactRainer::TactRainer(string filename) {
   
   numSonar = (int)param["numSonar"];
   numFirstSonar = (int)param["numFirstSonar"];
+  numLastFrontSonar = (int)param["numLastFrontSonar"];
   numLastSonar = (int)param["numLastSonar"];
   
   normalVel = param["normalVel"];
@@ -102,7 +103,7 @@ Vect2D TactRainer::goalAttraction(Point2D goal) {
 }
 
 Vect2D TactRainer::obstacleRepulsion(double th, double th_dmin, bool *impactAlert) {
-  double mod_vObs [numSonar]; //TODO revisar perque s'ha de emprar
+  double mod_vObs [numSonar];
   double di = 0.0;
   int nearSens; /* Sensor que ha detectat distància mínima */
   double dmin = DBL_MAX;
@@ -110,20 +111,13 @@ Vect2D TactRainer::obstacleRepulsion(double th, double th_dmin, bool *impactAler
   Vect2D vRep (0.0, 0.0);
   ArSensorReading *sensor;
   
-  //TODO tal vegada tambe incloure sensors de darrere numXXXRearSonar
+  /* Calcul de la repulsió dels sensors de davant */
   for (int i = numFirstSonar; i <= numLastSonar; i++) {
     sensor = ar.getSonarReading(i);
     di = (double)sensor->getRange();
     
-    /* Guarda la més petita de totes les distàncies */
-    //TODO tal vegada hauria de ser nomes un sensor frontal
-    if (di < dmin) {
-      dmin = di;
-      nearSens = i;
-    }
-
     if (di < th) {
-      vObs[i].setXY(sensor->getSensorDX(), sensor->getSensorDY());
+      vObs[i].setXY(sensor->getX() - sensor->getXTaken(), sensor->getY() - sensor->getYTaken());
       vObs[i] *= -1;
       mod_vObs[i] = CALC_MOD_VOBS(maxDist, di);
        /* Convertim el vector en un que tingui el mòdul (maxdist - di)/ maxdist */
@@ -133,7 +127,16 @@ Vect2D TactRainer::obstacleRepulsion(double th, double th_dmin, bool *impactAler
     }
         
     vRep += vObs[i] * sonarWeight[i];
-  }
+    
+    /* Guarda la més petita de totes les distàncies */
+    /* Si es el sensor que detecta la distància mínima es té doblement amb compte */
+    if (di < dmin) {
+      dmin = di;
+      nearSens = i;
+      vRep += vObs[i] * sonarWeight[i];
+    }
+        
+  }  
   
   *impactAlert = (dmin < th_dmin);
   
@@ -175,6 +178,70 @@ double TactRainer::getSlowVel() {
 }
 double TactRainer::getNormalVel() {
   return normalVel;
+}
+
+/* Fa que el robot es mogui fins que es troba a una distancia menor de th. */
+int TactRainer::findObject(double vel, double th) {
+  ArSensorReading *sensor;	
+  double xRob, yRob, xObs, yObs, d;
+  
+  ar.setVel(vel); 
+  
+  while (true) {
+    for (int i = numFirstSonar; i <= numLastFrontSonar; i++) {
+      sensor = ar.getSonarReading(i);
+      d = (double)sensor->getRange();
+            
+      if (d < th) {
+	printf("Obesrvant el sensor %d\n", i);
+	printf("Posicio robot %f %f\n", ar.getX(), ar.getY());
+	printf("getXY: %f, %f\n", sensor->getX(), sensor->getY());
+	printf("getXYTaken: %f, %f\n", sensor->getXTaken(), sensor->getYTaken());
+	printf("getSensorDXY: %f, %f\n", sensor->getSensorDX(), sensor->getSensorDY());
+	printf("vector al sensor %f, %f\n", sensor->getX() - sensor->getSensorX(), sensor->getY() - sensor->getSensorY());
+	return 1;
+      }
+    }
+  }
+}
+
+/* El robot es mou fins trobar un objecte. Llavors calcula el vector de 
+repulsió per tal d'esquivar l'objecte. Es robot es mou per l'entorn fins 
+que es pitja la tecla Esc */
+void TactRainer::wander() {
+  double vel, th, th_dmin, alpha;
+  ArKeyHandler keyHandler;
+  bool impactAlert;
+  Vect2D vro;
+
+  Aria::setKeyHandler(&keyHandler);
+  ar.attachKeyHandler(&keyHandler);
+
+  vel = getNormalVel();
+  th = getMaxDist();
+  th_dmin = getImpactDist();
+
+  alpha = 0.0;
+
+  while (1) {
+    //Avançam fins a trobar un objecte
+    findObject(vel, th);
+    printf("He trobat un objecte, m'atur.\n");
+    
+    //Ens aturam
+    ar.setVel(0);
+
+    //Calculam el vector de repulsió i l'angle de gir
+    vro = obstacleRepulsion(th, th_dmin, &impactAlert);
+    alpha = ArMath::atan2(vro.y, vro.x);
+    printf("Reorientació a (%f, %f) que suposa un angle %f\n",vro.x, vro.y, alpha);
+    
+    //Orientam el robot cap a la direcció que ha de seguir		
+    ar.setHeading(alpha);
+    while (!ar.isHeadingDone(thHeading)) {
+      ArUtil::sleep(blindTime);
+    }
+  }
 }
 
 /* Fa que el robot vagi al punt pnt evitant els obstaques que troba. 
@@ -232,7 +299,7 @@ bool TactRainer::goGoal(Point2D pnt) {
     
     /* Si la diferencia entre angles fos molt petita es faria sense avançar */
     if (fabs(alpha) > dr) {
-      while (!ar.isHeadingDone(thHeading)) {
+      while (!ar.isHeadingDone(getThHeading(alpha))) {
 	ar.setVel(0);
       }
     }

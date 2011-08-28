@@ -19,8 +19,6 @@ public:
   
   Rainer(string filename);
        
-  void wander();
-  int findObject(double vel, double th);
   void cleanArea(int xs, int zs, double ce, Coor robotCoor);
    
 };

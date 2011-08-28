@@ -7,62 +7,6 @@ Rainer::Rainer(string filename) {
   exec = &tact.ar;
 }
 
-/* Fa que el robot es mogui fins que es troba a una distancia menor de th. */
-int Rainer::findObject(double vel, double th) {
-  ArSensorReading *sensor;	
-  double xRob, yRob, xObs, yObs, d;
-  
-  exec->setVel(vel); 
-  while (true) {
-    xRob = exec->getX();
-    yRob = exec->getY(); 
-    for (int i = tact.getNumFirstSonar(); i < tact.getNumLastSonar(); i++) {
-      sensor = exec->getSonarReading(i);
-      xObs = sensor->getX();
-      yObs = sensor->getY(); 
-      d = ArMath::distanceBetween(xRob, yRob, xObs, yObs);
-      if (d < th) {
-        exec->setVel(0); 
-        return 1;
-      }
-    }
-  }
-}
-
-/* El robot es mou fins trobar un objecte. Llavors calcula el vector de 
-repulsió per tal d'esquivar l'objecte. Es robot es mou per l'entorn fins 
-que es pitja la tecla Esc */
-void Rainer::wander() {
-  double vel, th, th_dmin, alpha;
-  ArKeyHandler keyHandler;
-  bool impactAlert;
-  Vect2D vro;
-
-  Aria::setKeyHandler(&keyHandler);
-  exec->attachKeyHandler(&keyHandler);
-
-  vel = tact.getNormalVel();
-  th = tact.getMaxDist();
-  th_dmin = tact.getImpactDist();
-
-  alpha = 0.0;
-
-  while (1) {
-    //Avançam fins a trobar un objecte
-    findObject(vel, th);  
-
-    //Calculam el vector de repulsió i l'angle de gir
-    vro = tact.obstacleRepulsion(th, th_dmin, &impactAlert);
-    alpha = ArMath::atan2(vro.y, vro.x);
-
-    //Orientam el robot cap a la direcció que ha de seguir		
-    exec->setHeading(alpha);
-    while (!exec->isHeadingDone(tact.getThHeading(alpha))) {
-      exec->setVel(0);
-    }
-  }
-}
-
 void Rainer::cleanArea(int xs, int ys, double ce, Coor robotCoor) {
   Point2D robotPoint, p;
   Coor c;
