@@ -102,7 +102,7 @@ Vect2D TactRainer::goalAttraction(Point2D goal) {
   return va.norm();   
 }
 
-Vect2D TactRainer::obstacleRepulsion(double th, double th_dmin, bool *impactAlert) {
+Vect2D TactRainer::obstacleRepulsion(double th, double th_dmin, bool *obstacle, bool *impactAlert) {
   double mod_vObs [numSonar];
   double di = 0.0;
   int nearSens; /* Sensor que ha detectat distància mínima */
@@ -111,12 +111,15 @@ Vect2D TactRainer::obstacleRepulsion(double th, double th_dmin, bool *impactAler
   Vect2D vRep (0.0, 0.0);
   ArSensorReading *sensor;
   
+  
+  *obstacle = false;
   /* Calcul de la repulsió dels sensors de davant */
   for (int i = numFirstSonar; i <= numLastSonar; i++) {
     sensor = ar.getSonarReading(i);
     di = (double)sensor->getRange();
     
     if (di < th) {
+      *obstacle = true;
       vObs[i].setXY(sensor->getX() - sensor->getXTaken(), sensor->getY() - sensor->getYTaken());
       vObs[i] *= -1;
       mod_vObs[i] = CALC_MOD_VOBS(maxDist, di);
@@ -211,7 +214,7 @@ que es pitja la tecla Esc */
 void TactRainer::wander() {
   double vel, th, th_dmin, alpha;
   ArKeyHandler keyHandler;
-  bool impactAlert;
+  bool impactAlert, obstacle;
   Vect2D vro;
 
   Aria::setKeyHandler(&keyHandler);
@@ -232,7 +235,7 @@ void TactRainer::wander() {
     ar.setVel(0);
 
     //Calculam el vector de repulsió i l'angle de gir
-    vro = obstacleRepulsion(th, th_dmin, &impactAlert);
+    vro = obstacleRepulsion(th, th_dmin, &obstacle, &impactAlert);
     alpha = ArMath::atan2(vro.y, vro.x);
     printf("Reorientació a (%f, %f) que suposa un angle %f\n",vro.x, vro.y, alpha);
     
@@ -252,7 +255,8 @@ void TactRainer::wander() {
 bool TactRainer::goGoal(Point2D pnt) {
   double alpha, vel;
   double d;
-  bool impactAlert;
+  double heading;
+  bool impactAlert, obstacle;
   bool canAccess;
   Point2D hereP;
   
@@ -279,7 +283,7 @@ bool TactRainer::goGoal(Point2D pnt) {
     d = ArMath::distanceBetween(ar.getX(), ar.getY(), pnt.x, pnt.y);
     
     va = goalAttraction(pnt);
-    vro = obstacleRepulsion(maxDist, impactDist, &impactAlert);
+    vro = obstacleRepulsion(maxDist, impactDist, &obstacle, &impactAlert);
         
     if (impactAlert) {
       /* Col.lisió imminent, sols tenim amb compte el vector de repulsió */
@@ -299,7 +303,13 @@ bool TactRainer::goGoal(Point2D pnt) {
     
     /* Si la diferencia entre angles fos molt petita es faria sense avançar */
     if (fabs(alpha) > dr) {
-      while (!ar.isHeadingDone(getThHeading(alpha))) {
+      if (obstacle) {
+	printf("Obstacled TH\n");
+	heading = thHeadingObstacled;
+      } else {
+	heading = getThHeading(alpha);
+      }
+      while (!ar.isHeadingDone(heading)) {
 	ar.setVel(0);
       }
     }

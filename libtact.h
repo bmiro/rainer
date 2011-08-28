@@ -72,7 +72,7 @@ public:
   double getNormalVel();
   
   Vect2D goalAttraction(Point2D goal);
-  Vect2D obstacleRepulsion(double th, double th_dmin, bool *impactAlert);
+  Vect2D obstacleRepulsion(double th, double th_dmin, bool *obstacle, bool *impactAlert);
   
   int findObject(double vel, double th);
   void wander();
