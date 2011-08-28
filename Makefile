@@ -27,10 +27,10 @@ provalib2d: lib2d
 sim:
 	#xterm -hold -e "MobileSim -m /usr/local/Aria/maps/triangle.map" &
 	#xterm -hold -e "MobileSim -m ./maps/quatrepunobs.map" &
-	xterm -hold -e "MobileSim -m ./maps/obstacleInclinat.map" &
+	#xterm -hold -e "MobileSim -m ./maps/obstacleInclinat.map" &
 	#xterm -hold -e "MobileSim -m ./maps/duesparets.map" &
-	#xterm -hold -e "MobileSim -nomap" &
-	#xterm -hold -e "MobileSim -m ./maps/provaSensors.map" &
+	xterm -hold -e "MobileSim -nomap" &
+	#xterm -hold -e "MobileSim -m ./maps/tancat.map" &
 	sleep 1
 	xterm -hold -e "./rainer"
 
