@@ -21,7 +21,10 @@ int main(int argc, char **argv) {
 //       cout << (*curr).first << " " << (*curr).second << endl;
 //   }
 
-  Rainer rainer(FILE_PATH);
+  Coor cr;
+  cr.x = 3;
+  cr.y = 3;
+  Rainer rainer(FILE_PATH, 8, 8, 500.0, cr);
 
   /**************************
   *      Àrea a netejar     *
@@ -35,12 +38,7 @@ int main(int argc, char **argv) {
   *   1 |_|_|_|_|_|_|_|_|   *
   *   0 |_|_|_|_|_|_|_|_|   *
   *      0 1 2 3 4 5 6 7    *
-  ***************************/
-
-  Coor cr;
-  cr.x = 3;
-  cr.y = 3;
-  
+  ***************************/ 
              
   Point2D punts[4];
   punts[0].setXY(0.0, 0.0);
@@ -52,7 +50,7 @@ int main(int argc, char **argv) {
   
   rainer.tact.init(&argc, argv);
   while (rainer.tact.ar.isRunning()) { //TODO mes elegant amb un .exec->isRunning pero no rula joder ostia puta
-  rainer.cleanArea(8, 8, 500.0, cr);
+  rainer.cleanArea();
 //      if (!rainer.tact.goGoal(punts[1], 1000.0)) {
 //        printf("No puc arribar a l'objecte");
 //      }

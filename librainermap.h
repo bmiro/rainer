@@ -32,9 +32,9 @@ private:
   
   char charOf(int x, int y);
   
-  RainerMap() { };
-  
 public:
+  
+  RainerMap() { };
   RainerMap(int sizex, int sizey, double cellEdge, Coor robotCoor, Point2D robotPoint);
     
   void setRobotPos(Coor c);

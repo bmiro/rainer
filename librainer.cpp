@@ -1,38 +1,41 @@
 #include "librainer.h"
 
 void Rainer::provaF() {
-  printf("Prooovaaa\n");
+//   printf("\n\nProoovaaaaaaaaaaaaaaaaaaaaaaa\n\n");
+//   Coor c;
+//   c.x = 0;
+//   c.y = 0;
+//   mp.mark(c, DIRTY);
 }
 
-Rainer::Rainer(string filename) :
-  myTaskCB(this, &Rainer::provaF)
+Rainer::Rainer(string filename, int xs, int ys, double ce, Coor robotCoor) :
+  myTaskCB(this, &Rainer::provaF) {
 
-{
-
+  Point2D robotPoint;
+    
   TactRainer tact(filename);
   exec = &tact.ar;
   
-  exec->addUserTask("Prova", 10, &myTaskCB);
+  robotPoint.x = 0.0;
+  robotPoint.y = 0.0;
+  RainerMap mp(xs, ys, ce, robotCoor, robotPoint); 
+
+   exec->addUserTask("Prova", 0, &myTaskCB);
 
 }
 
-void Rainer::cleanArea(int xs, int ys, double ce, Coor robotCoor) {
-  Point2D robotPoint, p;
+void Rainer::cleanArea() {
+  Point2D p;
   Coor c;
 
-  
-  robotPoint.x = exec->getX();
-  robotPoint.y = exec->getY();
-  
-  RainerMap mp(xs, ys, ce, robotCoor, robotPoint); 
   mp.printMap();
-  mp.mark(robotCoor, CLEAN);  
+//   mp.mark(robotCoor, CLEAN);  
   while (!mp.isClean()) {
     c = mp.getNextPos(CLEAN);
     p = mp.getRealXY(c);
     
     printf("Vaig a netejar la cel.la a (%f, %f)\n", p.x, p.y);
-    if (tact.goGoal(p, ce)){ //Revisar el segon paràmetre
+    if (tact.goGoal(p, cellEdge)){ //Revisar el segon paràmetre
       mp.mark(c, CLEAN);
     } else {
       mp.mark(c, OBSTACLE);

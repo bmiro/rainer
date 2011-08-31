@@ -15,14 +15,18 @@ private:
   
   ArFunctorC<Rainer> myTaskCB;
   
+  double cellEdge;
+  
 public:
   TactRainer tact; /* Accés a nivell tàctic */
   ArRobot *exec; /* Acceés al nivell executiu (punter a ArRobot) */
   
-  Rainer(string filename);
+  RainerMap mp;
+
+  Rainer(string filename, int xs, int zs, double ce, Coor robotCoor);
   
   void provaF(void);
-  void cleanArea(int xs, int zs, double ce, Coor robotCoor);
+  void cleanArea();
    
 };
 #endif
