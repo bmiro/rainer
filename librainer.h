@@ -13,7 +13,7 @@
 class Rainer {
 private: 
   
-  ArFunctorC<Prova> prova;
+  ArFunctorC<Rainer> myTaskCB;
   
 public:
   TactRainer tact; /* Accés a nivell tàctic */
@@ -21,7 +21,7 @@ public:
   
   Rainer(string filename);
   
-  void provaF();
+  void provaF(void);
   void cleanArea(int xs, int zs, double ce, Coor robotCoor);
    
 };

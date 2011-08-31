@@ -5,14 +5,14 @@ void Rainer::provaF() {
 }
 
 Rainer::Rainer(string filename) :
-  prova(this, Rainer::provaF)
+  myTaskCB(this, &Rainer::provaF)
 
 {
 
   TactRainer tact(filename);
   exec = &tact.ar;
   
-  exec->addUserTask("Prova", 10, &prova);
+  exec->addUserTask("Prova", 10, &myTaskCB);
 
 }
 
