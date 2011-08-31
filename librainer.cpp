@@ -1,16 +1,26 @@
 #include "librainer.h"
 
-Rainer::Rainer(string filename) {
+void Rainer::provaF() {
+  printf("Prooovaaa\n");
+}
+
+Rainer::Rainer(string filename) :
+  prova(this, Rainer::provaF)
+
+{
 
   TactRainer tact(filename);
-
   exec = &tact.ar;
+  
+  exec->addUserTask("Prova", 10, &prova);
+
 }
 
 void Rainer::cleanArea(int xs, int ys, double ce, Coor robotCoor) {
   Point2D robotPoint, p;
   Coor c;
 
+  
   robotPoint.x = exec->getX();
   robotPoint.y = exec->getY();
   
