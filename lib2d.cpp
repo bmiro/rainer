@@ -46,7 +46,6 @@ Point2D& Point2D::operator -=(const Point2D& pt) {
   return *this;
 }
 
-
 Point2D& Point2D::operator *=(double s) {
   x *= s;
   y *= s;

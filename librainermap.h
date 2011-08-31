@@ -4,6 +4,7 @@
 #include <stdio.h>
 #include "stdlib.h"
 #include "lib2d.h"
+#include "common_rainer.h"
 
 #define OBS_CHAR '#'
 #define CLN_CHAR ' '
@@ -11,10 +12,6 @@
 #define RBT_CHAR '@'
 
 enum State {CLEAN, DIRTY, OBSTACLE};
-
-struct Coor {
-  int x, y;
-};
 
 struct Cell {
   State state;

@@ -16,4 +16,9 @@
 
 using namespace std;
 
+struct Coor {
+  int x, y;
+};
+
+
 //map<string, double> param;

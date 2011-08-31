@@ -102,7 +102,8 @@ Vect2D TactRainer::goalAttraction(Point2D goal) {
   return va.norm();   
 }
 
-Vect2D TactRainer::obstacleRepulsion(double th, double th_dmin, bool *obstacle, bool *impactAlert) {
+Vect2D TactRainer::obstacleRepulsion(double th, double th_dmin,
+				     bool *obstacle, bool *impactAlert, Coor *nearObstacleCoor) {
   double mod_vObs [numSonar];
   double di = 0.0;
   int nearSens; /* Sensor que ha detectat distància mínima */
@@ -111,7 +112,8 @@ Vect2D TactRainer::obstacleRepulsion(double th, double th_dmin, bool *obstacle, 
   Vect2D vRep (0.0, 0.0);
   ArSensorReading *sensor;
   
-  
+  *nearObstacleCoor->x = DBL_MAX;
+  *nearObstacleCoor->y = DBL_MAX;
   *obstacle = false;
   /* Calcul de la repulsió dels sensors de davant */
   for (int i = numFirstSonar; i <= numLastSonar; i++) {
@@ -136,6 +138,8 @@ Vect2D TactRainer::obstacleRepulsion(double th, double th_dmin, bool *obstacle, 
     if (di < dmin) {
       dmin = di;
       nearSens = i;
+      *nearObstacleCoor->x = sensor->getX();
+      *nearObxtacleCoor->y = sensor->getY();
       vRep += vObs[i] * sonarWeight[i];
     }
         
@@ -252,7 +256,7 @@ void TactRainer::wander() {
  *   False si es considera que no es pot arribar al punt 
  *   True si ha pogut arribar al punt
  */
-bool TactRainer::goGoal(Point2D pnt) {
+bool TactRainer::goGoal(Point2D pnt, double obsRadius) {
   double alpha, vel;
   double d;
   double heading;
@@ -285,6 +289,14 @@ bool TactRainer::goGoal(Point2D pnt) {
     va = goalAttraction(pnt);
     vro = obstacleRepulsion(maxDist, impactDist, &obstacle, &impactAlert);
         
+    if (obstacle) {
+      /* Miram si el punt on anam i l'obstacle detectat estan suficientment
+	junts com per considerar el punt inaccessible */
+	
+      
+    }
+    
+    
     if (impactAlert) {
       /* Col.lisió imminent, sols tenim amb compte el vector de repulsió */
       vd.x = vro.x;
