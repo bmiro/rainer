@@ -1,0 +1,11 @@
+2D-Map
+LineMinPos: -5420 -3235
+LineMaxPos: 1000000 2385
+NumLines: 3
+LinesAreSorted: true
+Cairn: RobotHome 0 0 0.000000 "" ICON ""
+LINES
+-5420 1000 3760 1000
+1000 2385 1000 -3235
+1000000 -2860 1000000 1860
+DATA
