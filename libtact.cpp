@@ -12,7 +12,7 @@ TactRainer::TactRainer(string filename) {
   }
   
   thHeading = param["thHeading"];
-  thHeadingObstacled = param["thHeadingObstacled"];
+  thObsHeading = param["thObsHeading"];
   thOnPoint = param["thOnPoint"];
   maxDist = param["maxDist"];
   impactDist = param["impactDist"];
@@ -255,6 +255,7 @@ void TactRainer::wander() {
     
     //Orientam el robot cap a la direcció que ha de seguir		
     ar.setHeading(alpha);
+    currHeading = alpha;
     while (!ar.isHeadingDone(thHeading)) {
       ArUtil::sleep(blindTime);
     }
@@ -287,14 +288,14 @@ bool TactRainer::goGoal(Point2D pnt, double obsRadius=100.0) {
   canAccess = true;
   while ((d >= thOnPoint) and canAccess) { 
     
-    if (DEBUG) { /* El primer cop hi poden haver valors no calculats, don't worry */
-      printf("A distància %f (%f de llindar)\n", d, thOnPoint);
-      printf("(%f, %f) -> (%f, %f)\n", ar.getX(), ar.getY(), pnt.x, pnt.y);
-      printf("VA: (%f, %f)\n", va.x, va.y);
-      printf("VO: (%f, %f)\n", vro.x, vro.y);
-      printf("VD: (%f, %f)\n", vd.x, vd.y);
-      printf("alpha: %f\n\n", alpha);
-    }
+//     if (DEBUG) { /* El primer cop hi poden haver valors no calculats, don't worry */
+//       printf("A distància %f (%f de llindar)\n", d, thOnPoint);
+//       printf("(%f, %f) -> (%f, %f)\n", ar.getX(), ar.getY(), pnt.x, pnt.y);
+//       printf("VA: (%f, %f)\n", va.x, va.y);
+//       printf("VO: (%f, %f)\n", vro.x, vro.y);
+//       printf("VD: (%f, %f)\n", vd.x, vd.y);
+//       printf("alpha: %f\n\n", alpha);
+//     }
     
     d = ArMath::distanceBetween(ar.getX(), ar.getY(), pnt.x, pnt.y);
     
@@ -326,18 +327,20 @@ bool TactRainer::goGoal(Point2D pnt, double obsRadius=100.0) {
     alpha = ArMath::atan2(vd.y, vd.x);
     
     ar.setHeading(alpha);
+    currHeading = alpha;
     
     /* Si la diferencia entre angles fos molt petita es faria sense avançar */
-    if (fabs(alpha) > dr) {
-      if (obstacle) {
-	printf("Obstacled TH\n");
-	heading = thHeadingObstacled;
-      } else {
-	heading = getThHeading(alpha);
-      }
-      while (!ar.isHeadingDone(heading)) {
-	ar.setVel(0);
-      }
+    
+    printf("currHeading %f, volem orientar a %f", currHeading, alpha);
+    
+    if (obstacle) {
+      printf("Obstacled TH\n");
+      heading = thObsHeading;
+    } else {
+      heading = getThHeading(alpha);
+    }
+    while (!ar.isHeadingDone(heading)) {
+      ar.setVel(0);
     }
 
     ar.setVel(vel);

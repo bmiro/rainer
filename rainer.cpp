@@ -52,10 +52,10 @@ int main(int argc, char **argv) {
   
   rainer.tact.init(&argc, argv);
   while (rainer.tact.ar.isRunning()) { //TODO mes elegant amb un .exec->isRunning pero no rula joder ostia puta
-  //rainer.cleanArea(8, 8, 500.0, cr);
-     if (!rainer.tact.goGoal(punts[1], 1000.0)) {
-       printf("No puc arribar a l'objecte");
-     }
+  rainer.cleanArea(8, 8, 500.0, cr);
+//      if (!rainer.tact.goGoal(punts[1], 1000.0)) {
+//        printf("No puc arribar a l'objecte");
+//      }
 //     rainer.tact.goGoal(punts[2]);
 //     rainer.tact.goGoal(punts[3]);
 //     rainer.tact.goGoal(punts[0]);

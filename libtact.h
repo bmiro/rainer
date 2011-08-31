@@ -24,7 +24,7 @@ private:
   
   /* Paràmetres del robot*/
   double thHeading;
-  double thHeadingObstacled;
+  double thObsHeading;
   double dr;
   double thOnPoint;
   double maxDist;
@@ -48,6 +48,8 @@ private:
   double *behaviourWeight;  
   
   map<string, double> param;
+  
+  double currHeading;
   
 public:
   ArRobot ar; /* Robot de l'aria */
