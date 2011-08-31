@@ -103,7 +103,8 @@ Vect2D TactRainer::goalAttraction(Point2D goal) {
 }
 
 Vect2D TactRainer::obstacleRepulsion(double th, double th_dmin,
-				     bool *obstacle, bool *impactAlert, Coor *nearObstacleCoor) {
+				     bool *obstacle=NULL, bool *impactAlert=NULL,
+				     Coor *nearObstacleCoor=NULL) {
   double mod_vObs [numSonar];
   double di = 0.0;
   int nearSens; /* Sensor que ha detectat distància mínima */
@@ -112,16 +113,23 @@ Vect2D TactRainer::obstacleRepulsion(double th, double th_dmin,
   Vect2D vRep (0.0, 0.0);
   ArSensorReading *sensor;
   
-  *nearObstacleCoor->x = DBL_MAX;
-  *nearObstacleCoor->y = DBL_MAX;
-  *obstacle = false;
+  if (nearObstacleCoor != NULL) {
+    nearObstacleCoor->x = DBL_MAX;
+    nearObstacleCoor->y = DBL_MAX;
+  }
+  if (obstacle != NULL) {
+    *obstacle = false;
+  }
+  
   /* Calcul de la repulsió dels sensors de davant */
   for (int i = numFirstSonar; i <= numLastSonar; i++) {
     sensor = ar.getSonarReading(i);
     di = (double)sensor->getRange();
     
     if (di < th) {
-      *obstacle = true;
+      if (obstacle != NULL) {
+	*obstacle = true;
+      }
       vObs[i].setXY(sensor->getX() - sensor->getXTaken(), sensor->getY() - sensor->getYTaken());
       vObs[i] *= -1;
       mod_vObs[i] = CALC_MOD_VOBS(maxDist, di);
@@ -138,14 +146,17 @@ Vect2D TactRainer::obstacleRepulsion(double th, double th_dmin,
     if (di < dmin) {
       dmin = di;
       nearSens = i;
-      *nearObstacleCoor->x = sensor->getX();
-      *nearObxtacleCoor->y = sensor->getY();
+      if (nearObstacleCoor != NULL) {
+	nearObstacleCoor->x = sensor->getX();
+	nearObstacleCoor->y = sensor->getY();
+      }
       vRep += vObs[i] * sonarWeight[i];
     }
         
   }  
-  
-  *impactAlert = (dmin < th_dmin);
+  if (impactAlert != NULL) {
+    *impactAlert = (dmin < th_dmin);
+  }
   
   return vRep.norm(); //TODO Es correcte normalitzar?
 }
@@ -218,7 +229,6 @@ que es pitja la tecla Esc */
 void TactRainer::wander() {
   double vel, th, th_dmin, alpha;
   ArKeyHandler keyHandler;
-  bool impactAlert, obstacle;
   Vect2D vro;
 
   Aria::setKeyHandler(&keyHandler);
@@ -239,7 +249,7 @@ void TactRainer::wander() {
     ar.setVel(0);
 
     //Calculam el vector de repulsió i l'angle de gir
-    vro = obstacleRepulsion(th, th_dmin, &obstacle, &impactAlert);
+    vro = obstacleRepulsion(th, th_dmin, NULL, NULL);
     alpha = ArMath::atan2(vro.y, vro.x);
     printf("Reorientació a (%f, %f) que suposa un angle %f\n",vro.x, vro.y, alpha);
     
@@ -256,13 +266,14 @@ void TactRainer::wander() {
  *   False si es considera que no es pot arribar al punt 
  *   True si ha pogut arribar al punt
  */
-bool TactRainer::goGoal(Point2D pnt, double obsRadius) {
+bool TactRainer::goGoal(Point2D pnt, double obsRadius=100.0) {
   double alpha, vel;
-  double d;
+  double d, e;
   double heading;
   bool impactAlert, obstacle;
   bool canAccess;
   Point2D hereP;
+  Coor nearObstacleCoor;
   
    /* Vector Repulsió Obstacle, Vector Atraccio objectiu, Vector Director */
   Vect2D vro, va, vd;
@@ -272,6 +283,7 @@ bool TactRainer::goGoal(Point2D pnt, double obsRadius) {
   printf("M'encamin al punt (%f, %f)\n", pnt.x, pnt.y);
   
   d = DBL_MAX;
+  e = DBL_MAX;
   canAccess = true;
   while ((d >= thOnPoint) and canAccess) { 
     
@@ -287,16 +299,18 @@ bool TactRainer::goGoal(Point2D pnt, double obsRadius) {
     d = ArMath::distanceBetween(ar.getX(), ar.getY(), pnt.x, pnt.y);
     
     va = goalAttraction(pnt);
-    vro = obstacleRepulsion(maxDist, impactDist, &obstacle, &impactAlert);
+    vro = obstacleRepulsion(maxDist, impactDist, &obstacle, &impactAlert, &nearObstacleCoor);
         
     if (obstacle) {
       /* Miram si el punt on anam i l'obstacle detectat estan suficientment
 	junts com per considerar el punt inaccessible */
-	
-      
+      e = ArMath::distanceBetween(nearObstacleCoor.x, nearObstacleCoor.y, pnt.x, pnt.y);
+      printf("Hi ha un obstacle a distànciea %f del punt objectiu", e);
+      if (e < obsRadius) {
+	return false;
+      }
     }
-    
-    
+       
     if (impactAlert) {
       /* Col.lisió imminent, sols tenim amb compte el vector de repulsió */
       vd.x = vro.x;

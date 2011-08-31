@@ -21,7 +21,7 @@ void Rainer::cleanArea(int xs, int ys, double ce, Coor robotCoor) {
     c = mp.getNextPos(CLEAN);
     p = mp.getRealXY(c);
     printf("\nVaig al punt real: %f-%f\n", p.x, p.y);
-    tact.goGoal(p);
+    tact.goGoal(p, ce/2); //Revisar el segon paràmetre
     mp.mark(c, CLEAN);
     mp.setRobotPos(c);
     mp.printMap();

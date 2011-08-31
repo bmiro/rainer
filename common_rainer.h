@@ -16,9 +16,12 @@
 
 using namespace std;
 
+#ifndef COOR_STRUCT
+#define COOR_STRUCT
 struct Coor {
   int x, y;
 };
+#endif
 
 
 //map<string, double> param;
