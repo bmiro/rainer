@@ -328,7 +328,6 @@ bool TactRainer::goGoal(Point2D pnt, double obsRadius=100.0) {
 	return false;
       }
     }
-       
     if (impactAlert) {
       /* Col.lisió imminent, sols tenim amb compte el vector de repulsió */
       vd.x = vro.x;

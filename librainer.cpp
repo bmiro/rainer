@@ -39,8 +39,6 @@ void Rainer::cleanArea() {
     } else {
       tact.mp->mark(c, OBSTACLE);
     }
-    
-    tact.mp->setRobotPos(c);
     tact.mp->printMap();
   }  
   

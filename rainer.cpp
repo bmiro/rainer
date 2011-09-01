@@ -15,11 +15,6 @@ double sonarWeight [N_FRONT_SONARS];
 double behaviorWeight [BEHAVIOR_FATORS];
 
 int main(int argc, char **argv) {
- 
-//   map<string, double>::iterator curr,end;
-//   for (curr = param.begin(); curr != param.end(); curr++) {
-//       cout << (*curr).first << " " << (*curr).second << endl;
-//   }
 
   /**************************
   *      Àrea a netejar     *
@@ -39,24 +34,29 @@ int main(int argc, char **argv) {
 
   rainer.tact.init(&argc, argv);
    
-//   Point2D punts[4];
-//   punts[0].setXY(0.0, 0.0);
-//   punts[1].setXY(0.0, 5000.0);
-//   punts[2].setXY(5000.0, 0.0);
-//   punts[3].setXY(5000.0, 5000.0);
+   Point2D punts[4];
+   punts[0].setXY(0.0, 0.0);
+   punts[1].setXY(0.0, 5000.0);
+   punts[2].setXY(5000.0, 0.0);
+   punts[3].setXY(5000.0, 5000.0);
 
-  cout << "Hola here\n";
-  while (rainer.tact.ar.isRunning()) { //TODO mes elegant amb un .exec->isRunning pero no rula joder ostia puta
-  rainer.cleanArea();
-//      if (!rainer.tact.goGoal(punts[1], 1000.0)) {
-//        printf("No puc arribar a l'objecte");
-//      }
-//     rainer.tact.goGoal(punts[2]);
-//     rainer.tact.goGoal(punts[3]);
-//     rainer.tact.goGoal(punts[0]);
-//    rainer.tact.wander();
-    rainer.tact.ar.setVel(0);
-    ArUtil::sleep(10000000);
+  while (rainer.tact.ar.isRunning()) { 
+    rainer.cleanArea();
+   
+//   if (!rainer.tact.goGoal(punts[1], 1000.0)) {
+//     printf("No puc arribar a l'objecte");
+//   } else {
+//     printf("He arribat a %f %f", rainer.tact.ar.getX(), rainer.tact.ar.getY());
+//   }
+//   rainer.tact.goGoal(punts[2], 1000.0);
+//   rainer.tact.goGoal(punts[3], 1000.0);
+//   rainer.tact.goGoal(punts[0], 1000.0);
+   
+//   rainer.tact.wander();
+        
+   rainer.tact.ar.setVel(0);
+   ArUtil::sleep(10000000);
+   
   }
 
   cout << "Goodbye!";
