@@ -25,7 +25,6 @@ bool Trace::isInnaccessible() {
 
   
   printf("isInnaDth: %f\n", distanceTh);
-  //TODO posar matreix print a llarg del codi i veure on es perd
   
   for (i = 0; i < memSize; i++) {
       // Si encara no tenim tota la memoria plena no podem considerar obstacle 

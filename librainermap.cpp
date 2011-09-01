@@ -31,7 +31,7 @@ void RainerMap::setRobotPos(Coor c) {
   robotCell.y = c.y;
 }
 
-Coor RainerMap::zigZagHorizontal() {
+Coor RainerMap::zigZag() {
   Coor c; 
   
   if (robotCell.x < xmax-1) {
@@ -59,8 +59,6 @@ Coor RainerMap::getNextPos(State s, double x, double y) {
     for (int j = 0; j < ymax; j++) {
       if (m[i][j].state == s) {
 	d = ArMath::distanceBetween(m[i][j].realCenter.x, m[i][j].realCenter.y, x, y);
-	printf("Centre actual %f %f candidat %f %f\n",m[i][j].realCenter.x, m[i][j].realCenter.y, x, y);
-// 	printf("Calculant %f\n", d);
 	if (d < dmin) {
 	  dmin = d;
 	  nearCell.x = i;
@@ -75,7 +73,6 @@ Coor RainerMap::getNextPos(State s, double x, double y) {
     nearCell.y = NULL_COOR;
   }
   
-//   nearCell = zigZagHorizontal();
   printf("Estic a %d %d i el lloc mes proper es %d %d\n", robotCell.x, robotCell.y, nearCell.x, nearCell.y);
   
   return nearCell;
@@ -168,7 +165,7 @@ void RainerMap::printMap() {
     for (int x = 0; x < xmax; x++) {
         printf("%c", charOf(x, y));
     }
-    printf("\n");
+    printf("|\n");
   }
   printf("   --------\n");
   printf("   ");

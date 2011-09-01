@@ -12,7 +12,6 @@ TactRainer::TactRainer(string filename) :
   
   if (!loadGlobalParams(filename)) {
     printf("No s'han pogut carregar els paràmetres de configuració.\n");
-    //return 1; Aixecar escepcio
   } else {
     printf("Parametres llegits del fitxer %s", (char *)filename.c_str());
   }
@@ -74,17 +73,20 @@ void TactRainer::ivSeen() {
     }
   }
   
+  //Escriure resultats a mapa de bits o fitxer
+  
 }
 
 /* Va marcant els punts per on ja s'ha passat */
 void TactRainer::routeDone() {
   Coor c;
   
+  /* Marcam per on hem passat */
   c = mp->getCellCoor(ar.getX(), ar.getY(), cellEdge/2);
   if (c.x != NULL_COOR) {
     mp->mark(c, CLEAN);
+    mp->setRobotPos(c);
   }
-//   printf("Estic passant per la cel.la %d %d", c.x, c.y);
   
 }
 
@@ -132,7 +134,7 @@ int TactRainer::init(int *argc, char **argv) {
   }
  
   ar.comInt(ArCommands::SOUNDTOG, 1);
-  ar.comInt(ArCommands::ENABLE, 1); //Habilitar els motors
+  ar.comInt(ArCommands::ENABLE, 1);
   ar.runAsync(false);
   return 0;
 }
@@ -196,11 +198,11 @@ Vect2D TactRainer::obstacleRepulsion(double th, double th_dmin,
     *impactAlert = (dmin < th_dmin);
   }
   
-  return vRep.norm(); //TODO Es correcte normalitzar?
+  return vRep.norm();
 }
 
 double TactRainer::getThHeading(double alpha) {
-  return thHeading; //TODO en funcio de alpha
+  return thHeading;
 }
 
 double TactRainer::getThOnPoint() {
@@ -308,23 +310,11 @@ bool TactRainer::goGoal(Point2D pnt, double obsRadius=100.0) {
   
    /* Vector Repulsió Obstacle, Vector Atraccio objectiu, Vector Director */
   Vect2D vro, va, vd;
-    
-  //Trace trace (elephantMem, distObstacledTh, timeObstacledTh); // TODO
-  
+      
   d = DBL_MAX;
   e = DBL_MAX;
   canAccess = true;
   while ((d >= thOnPoint) and canAccess) { 
-    
-//     if (DEBUG) { /* El primer cop hi poden haver valors no calculats, don't worry */
-//       printf("A distància %f (%f de llindar)\n", d, thOnPoint);
-//       printf("(%f, %f) -> (%f, %f)\n", ar.getX(), ar.getY(), pnt.x, pnt.y);
-//       printf("VA: (%f, %f)\n", va.x, va.y);
-//       printf("VO: (%f, %f)\n", vro.x, vro.y);
-//       printf("VD: (%f, %f)\n", vd.x, vd.y);
-//       printf("alpha: %f\n\n", alpha);
-//     }
-    
     d = ArMath::distanceBetween(ar.getX(), ar.getY(), pnt.x, pnt.y);
     
     va = goalAttraction(pnt);
@@ -367,14 +357,7 @@ bool TactRainer::goGoal(Point2D pnt, double obsRadius=100.0) {
 
     ar.setVel(vel);
     ArUtil::sleep(blindTime);
-
-    /* Si esteim detectant algun obstacle memoritzam la posicio */
-    if (!vro.isZero()) {
-      hereP.setXY(ar.getX(), ar.getY());
-      //trace.add(hereP);// TODO
-    }
     
-    //canAccess = not trace.isInnaccessible(); // TODO   
   }
   return canAccess;
 }

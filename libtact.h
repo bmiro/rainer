@@ -65,8 +65,6 @@ public:
   ArRobot ar; /* Robot de l'aria */
   RainerMap *mp;
 
-  
-  //TactRainer();
   TactRainer(string filename=FILE_PATH);
   
   int init(int *argc, char **argv);
@@ -97,7 +95,7 @@ public:
 
   bool goGoal(Point2D pnt, double obsRadius);
   
-    /* Getters de parametres del mapa, no intrinsecament lligats amb el tactic */
+  /* Getters de parametres del mapa, no intrinsecament lligats amb el tactic */
   double getCrX();
   double getCrY();
   int getSizeX();

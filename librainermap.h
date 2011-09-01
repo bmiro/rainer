@@ -32,17 +32,16 @@ private:
   bool isClean(Coor c) { return m[c.x][c.y].state == CLEAN; }
   bool isObstacle(Coor c) { return m[c.x][c.y].state == OBSTACLE; }
   
-  Coor zigZagHorizontal();
-  
   char charOf(int x, int y);
-  
-//   RainerMap() { };
-  
+    
 public:
   RainerMap(int sizex=8, int sizey=8, double cellEdge=500, int rcx=0, int rcy=0, double rpx=0.0, double rpy=0.0);
     
   void setRobotPos(Coor c);
+  
   Coor getNextPos(State s, double x, double y);
+  Coor zigZag();
+  
   Point2D getRealXY(Coor c);
   Coor getCellCoor(double px, double py, double th);
   

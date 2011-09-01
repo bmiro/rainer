@@ -55,6 +55,8 @@ int main(int argc, char **argv) {
 //     rainer.tact.goGoal(punts[3]);
 //     rainer.tact.goGoal(punts[0]);
 //    rainer.tact.wander();
+    rainer.tact.ar.setVel(0);
+    ArUtil::sleep(10000000);
   }
 
   cout << "Goodbye!";
