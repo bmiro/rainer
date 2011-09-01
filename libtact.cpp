@@ -1,9 +1,15 @@
 #include "libtact.h"
 
-TactRainer::TactRainer(string filename) {
+TactRainer::TactRainer(string filename) :
+  routeTask(this, &TactRainer::routeDone),
+  seenTask(this, &TactRainer::ivSeen) 
+  {
   
   char key[MAX_PARAM_LINE];
 
+  ar.addUserTask("routedone", 1, &routeTask);
+  ar.addUserTask("ivseen", 2, &seenTask);
+  
   if (!loadGlobalParams(filename)) {
     printf("No s'han pogut carregar els paràmetres de configuració.\n");
     //return 1; Aixecar escepcio
@@ -44,7 +50,42 @@ TactRainer::TactRainer(string filename) {
   
   behaviourWeight[0] = param["weightGoalAttraction"];
   behaviourWeight[1] = param["weightObstacleRepulsion"];
-    
+  
+  cellEdge = param["cellEdge"];
+  areaXsize = param["areaXsize"];
+  areaYsize = param["areaYsize"];
+  robotXinit = param["robotXinit"];
+  robotYinit = param["robotYinit"];
+  
+  mp = new RainerMap(areaXsize, areaYsize, cellEdge, robotXinit, robotYinit, 0.0, 0.0);
+
+}
+
+void TactRainer::ivSeen() {
+  double di;
+  ArSensorReading *sensor;
+  Coor c;
+
+  for (int i = numFirstSonar; i <= numLastSonar; i++) {
+    sensor = ar.getSonarReading(i);
+    di = (double)sensor->getRange();
+    if (di < getMaxDist()) {
+      c = mp->getCellCoor(sensor->getX(), sensor->getY(), cellEdge*0.7);
+    }
+  }
+  
+}
+
+/* Va marcant els punts per on ja s'ha passat */
+void TactRainer::routeDone() {
+  Coor c;
+  
+  c = mp->getCellCoor(ar.getX(), ar.getY(), cellEdge/2);
+  if (c.x != NULL_COOR) {
+    mp->mark(c, CLEAN);
+  }
+//   printf("Estic passant per la cel.la %d %d", c.x, c.y);
+  
 }
 
 /* Rutina local per la lectura dels paràmetres del fitxer */
@@ -79,7 +120,6 @@ int TactRainer::init(int *argc, char **argv) {
     printf("%f\n", sonarWeight[i]);
   }
   
-  
   ArSimpleConnector connector(argc, argv);
   if (!connector.parseArgs() || *argc > 1) {
     connector.logOptions();
@@ -104,18 +144,17 @@ Vect2D TactRainer::goalAttraction(Point2D goal) {
 
 Vect2D TactRainer::obstacleRepulsion(double th, double th_dmin,
 				     bool *obstacle=NULL, bool *impactAlert=NULL,
-				     Coor *nearObstacleCoor=NULL) {
+				     Point2D *nearObstaclePoint=NULL) {
   double mod_vObs [numSonar];
   double di = 0.0;
-  int nearSens; /* Sensor que ha detectat distància mínima */
   double dmin = DBL_MAX;
   Vect2D vObs [numSonar]; 
   Vect2D vRep (0.0, 0.0);
   ArSensorReading *sensor;
   
-  if (nearObstacleCoor != NULL) {
-    nearObstacleCoor->x = DBL_MAX;
-    nearObstacleCoor->y = DBL_MAX;
+  if (nearObstaclePoint != NULL) {
+    nearObstaclePoint->x = DBL_MAX;
+    nearObstaclePoint->y = DBL_MAX;
   }
   if (obstacle != NULL) {
     *obstacle = false;
@@ -145,10 +184,9 @@ Vect2D TactRainer::obstacleRepulsion(double th, double th_dmin,
     /* Si es el sensor que detecta la distància mínima es té doblement amb compte */
     if (di < dmin) {
       dmin = di;
-      nearSens = i;
-      if (nearObstacleCoor != NULL) {
-	nearObstacleCoor->x = sensor->getX();
-	nearObstacleCoor->y = sensor->getY();
+      if (nearObstaclePoint != NULL) {
+	nearObstaclePoint->x = sensor->getX();
+	nearObstaclePoint->y = sensor->getY();
       }
       vRep += vObs[i] * sonarWeight[i];
     }
@@ -201,7 +239,7 @@ double TactRainer::getNormalVel() {
 /* Fa que el robot es mogui fins que es troba a una distancia menor de th. */
 int TactRainer::findObject(double vel, double th) {
   ArSensorReading *sensor;	
-  double xRob, yRob, xObs, yObs, d;
+  double d;
   
   ar.setVel(vel); 
   
@@ -211,12 +249,6 @@ int TactRainer::findObject(double vel, double th) {
       d = (double)sensor->getRange();
             
       if (d < th) {
-	printf("Obesrvant el sensor %d\n", i);
-	printf("Posicio robot %f %f\n", ar.getX(), ar.getY());
-	printf("getXY: %f, %f\n", sensor->getX(), sensor->getY());
-	printf("getXYTaken: %f, %f\n", sensor->getXTaken(), sensor->getYTaken());
-	printf("getSensorDXY: %f, %f\n", sensor->getSensorDX(), sensor->getSensorDY());
-	printf("vector al sensor %f, %f\n", sensor->getX() - sensor->getSensorX(), sensor->getY() - sensor->getSensorY());
 	return 1;
       }
     }
@@ -243,7 +275,6 @@ void TactRainer::wander() {
   while (1) {
     //Avançam fins a trobar un objecte
     findObject(vel, th);
-    printf("He trobat un objecte, m'atur.\n");
     
     //Ens aturam
     ar.setVel(0);
@@ -251,7 +282,6 @@ void TactRainer::wander() {
     //Calculam el vector de repulsió i l'angle de gir
     vro = obstacleRepulsion(th, th_dmin, NULL, NULL);
     alpha = ArMath::atan2(vro.y, vro.x);
-    printf("Reorientació a (%f, %f) que suposa un angle %f\n",vro.x, vro.y, alpha);
     
     //Orientam el robot cap a la direcció que ha de seguir		
     ar.setHeading(alpha);
@@ -274,14 +304,12 @@ bool TactRainer::goGoal(Point2D pnt, double obsRadius=100.0) {
   bool impactAlert, obstacle;
   bool canAccess;
   Point2D hereP;
-  Coor nearObstacleCoor;
+  Point2D nearObstaclePoint;
   
    /* Vector Repulsió Obstacle, Vector Atraccio objectiu, Vector Director */
   Vect2D vro, va, vd;
     
   //Trace trace (elephantMem, distObstacledTh, timeObstacledTh); // TODO
-
-  printf("M'encamin al punt (%f, %f)\n", pnt.x, pnt.y);
   
   d = DBL_MAX;
   e = DBL_MAX;
@@ -300,13 +328,12 @@ bool TactRainer::goGoal(Point2D pnt, double obsRadius=100.0) {
     d = ArMath::distanceBetween(ar.getX(), ar.getY(), pnt.x, pnt.y);
     
     va = goalAttraction(pnt);
-    vro = obstacleRepulsion(maxDist, impactDist, &obstacle, &impactAlert, &nearObstacleCoor);
+    vro = obstacleRepulsion(maxDist, impactDist, &obstacle, &impactAlert, &nearObstaclePoint);
         
     if (obstacle) {
       /* Miram si el punt on anam i l'obstacle detectat estan suficientment
 	junts com per considerar el punt inaccessible */
-      e = ArMath::distanceBetween(nearObstacleCoor.x, nearObstacleCoor.y, pnt.x, pnt.y);
-      printf("Hi ha un obstacle a distànciea %f del punt objectiu", e);
+      e = ArMath::distanceBetween(nearObstaclePoint.x, nearObstaclePoint.y, pnt.x, pnt.y);
       if (e < obsRadius) {
 	return false;
       }
@@ -328,13 +355,8 @@ bool TactRainer::goGoal(Point2D pnt, double obsRadius=100.0) {
     
     ar.setHeading(alpha);
     currHeading = alpha;
-    
-    /* Si la diferencia entre angles fos molt petita es faria sense avançar */
-    
-    printf("currHeading %f, volem orientar a %f", currHeading, alpha);
-    
+        
     if (obstacle) {
-      printf("Obstacled TH\n");
       heading = thObsHeading;
     } else {
       heading = getThHeading(alpha);
@@ -357,3 +379,23 @@ bool TactRainer::goGoal(Point2D pnt, double obsRadius=100.0) {
   return canAccess;
 }
 
+double TactRainer::getCrX() {
+  return robotXinit;
+} 
+
+double TactRainer::getCrY() {
+  return robotYinit;
+}
+
+int TactRainer::getSizeX() {
+  return areaXsize;
+}
+
+int TactRainer::getSizeY() {
+  return areaYsize;
+}
+
+double TactRainer::getCe() {
+  return cellEdge;
+}
+  

@@ -2,6 +2,8 @@
 #define MAP_H
 
 #include <stdio.h>
+#include "Aria.h"
+
 #include "stdlib.h"
 #include "lib2d.h"
 #include "common_rainer.h"
@@ -10,6 +12,7 @@
 #define CLN_CHAR ' '
 #define DTY_CHAR '='
 #define RBT_CHAR '@'
+#define NULL_COOR -1
 
 enum State {CLEAN, DIRTY, OBSTACLE};
 
@@ -23,6 +26,7 @@ private:
   Cell **m; /* Mapa bi-dimensional l'inicialitzara i alocarà el constructor */
   Coor robotCell;
   int xmax, ymax;
+  double ce;
   
   bool isDirty(Coor c) { return m[c.x][c.y].state == DIRTY; }
   bool isClean(Coor c) { return m[c.x][c.y].state == CLEAN; }
@@ -32,16 +36,18 @@ private:
   
   char charOf(int x, int y);
   
-public:
+//   RainerMap() { };
   
-  RainerMap() { };
-  RainerMap(int sizex, int sizey, double cellEdge, Coor robotCoor, Point2D robotPoint);
+public:
+  RainerMap(int sizex=8, int sizey=8, double cellEdge=500, int rcx=0, int rcy=0, double rpx=0.0, double rpy=0.0);
     
   void setRobotPos(Coor c);
-  Coor getNextPos(State s);
-  Point2D getRealXY(Coor c);  
+  Coor getNextPos(State s, double x, double y);
+  Point2D getRealXY(Coor c);
+  Coor getCellCoor(double px, double py, double th);
   
   void mark(Coor c, State s);
+  void markAs(State orig, State final);
   
   bool isClean();
   bool isAbsolutelyClean();

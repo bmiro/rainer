@@ -12,6 +12,7 @@
 #include "common_rainer.h"
 #include "lib2d.h"
 #include "libtrace.h"
+#include "librainermap.h"
 
 #define BH_GOAL 0
 #define BH_OBSTACLE 1
@@ -20,7 +21,7 @@
 
 class TactRainer {
 private:
-   bool loadGlobalParams(string filename);
+  bool loadGlobalParams(string filename);
   
   /* Paràmetres del robot*/
   double thHeading;
@@ -51,13 +52,27 @@ private:
   
   double currHeading;
   
+  double cellEdge;
+  int areaXsize;
+  int areaYsize;
+  int robotXinit;
+  int robotYinit;
+  
+  ArFunctorC<TactRainer> routeTask;
+  ArFunctorC<TactRainer> seenTask;
+  
 public:
   ArRobot ar; /* Robot de l'aria */
+  RainerMap *mp;
+
   
   //TactRainer();
   TactRainer(string filename=FILE_PATH);
   
   int init(int *argc, char **argv);
+  
+  void ivSeen();
+  void routeDone();
  
   double getThHeading(double alpha);
   double getThOnPoint();
@@ -75,11 +90,18 @@ public:
   
   Vect2D goalAttraction(Point2D goal);
   Vect2D obstacleRepulsion(double th, double th_dmin,
-				     bool *obstacle, bool *impactAlert, Coor *nearObstacleCoor);
+				     bool *obstacle, bool *impactAlert, Point2D *nearObstaclePoint);
   
   int findObject(double vel, double th);
   void wander();
 
   bool goGoal(Point2D pnt, double obsRadius);
+  
+    /* Getters de parametres del mapa, no intrinsecament lligats amb el tactic */
+  double getCrX();
+  double getCrY();
+  int getSizeX();
+  int getSizeY();
+  double getCe();
 };
 #endif

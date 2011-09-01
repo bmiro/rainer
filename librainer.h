@@ -11,19 +11,12 @@
 #include "librainermap.h"
 
 class Rainer {
-private: 
-  
-  ArFunctorC<Rainer> myTaskCB;
-  
-  double cellEdge;
-  
+private:     
 public:
   TactRainer tact; /* Accés a nivell tàctic */
   ArRobot *exec; /* Acceés al nivell executiu (punter a ArRobot) */
   
-  RainerMap mp;
-
-  Rainer(string filename, int xs, int zs, double ce, Coor robotCoor);
+  Rainer(string filename);
   
   void provaF(void);
   void cleanArea();

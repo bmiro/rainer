@@ -1,11 +1,16 @@
 #include "librainermap.h"
 
-RainerMap::RainerMap (int sizex, int sizey, double cellEdge, Coor rc, Point2D robotPoint) {
+RainerMap::RainerMap (int sizex, int sizey, double cellEdge, int rcx, int rcy, double rpx, double rpy) {
   xmax = sizex; /* Recorda de 0 a 7! */  
   ymax = sizey;
-  robotCell.x = rc.x;
-  robotCell.y = rc.y;
-
+  Coor c;
+  
+  c.x = rcx;
+  c.y = rcy;
+  
+  setRobotPos(c);
+  
+  ce = cellEdge;
   m = new Cell*[sizex];
   for (int x = 0; x < xmax; x++) {
     m[x] = new Cell[sizey];
@@ -14,10 +19,11 @@ RainerMap::RainerMap (int sizex, int sizey, double cellEdge, Coor rc, Point2D ro
   for (int i = 0; i < xmax; i++) {
     for (int j = 0; j < ymax; j++) {
       m[i][j].state = DIRTY;
-      m[i][j].realCenter.x = robotPoint.x + (i - robotCell.x) * cellEdge;
-      m[i][j].realCenter.y = robotPoint.y + (j - robotCell.y) * cellEdge;
+      m[i][j].realCenter.x = rpx + (i - robotCell.x) * cellEdge;
+      m[i][j].realCenter.y = rpy + (j - robotCell.y) * cellEdge;
     }
   }
+  
 }
   
 void RainerMap::setRobotPos(Coor c) {
@@ -39,13 +45,41 @@ Coor RainerMap::zigZagHorizontal() {
     c.y = 0;
   }
 
-  printf("\n%d-%d\n", c.x, c.y);
+  printf("Robot esta a %d-%d\n", c.x, c.y);
 
   return c;
 }
 
-Coor RainerMap::getNextPos(State s) {
-  return zigZagHorizontal();
+Coor RainerMap::getNextPos(State s, double x, double y) {
+  Coor nearCell;
+  double d, dmin;
+  
+  dmin = DBL_MAX;
+  for (int i = 0; i < xmax; i++) {
+    for (int j = 0; j < ymax; j++) {
+      if (m[i][j].state == s) {
+	d = ArMath::distanceBetween(m[i][j].realCenter.x, m[i][j].realCenter.y, x, y);
+	printf("Centre actual %f %f candidat %f %f\n",m[i][j].realCenter.x, m[i][j].realCenter.y, x, y);
+// 	printf("Calculant %f\n", d);
+	if (d < dmin) {
+	  dmin = d;
+	  nearCell.x = i;
+	  nearCell.y = j;
+	}
+      }
+    }
+  }
+  if (dmin == DBL_MAX) {
+    printf("No queden celles amb aquest estat\n\n");
+    nearCell.x = NULL_COOR;
+    nearCell.y = NULL_COOR;
+  }
+  
+//   nearCell = zigZagHorizontal();
+  printf("Estic a %d %d i el lloc mes proper es %d %d\n", robotCell.x, robotCell.y, nearCell.x, nearCell.y);
+  
+  return nearCell;
+ 
 }
 
 Point2D RainerMap::getRealXY(Coor c) {
@@ -58,8 +92,38 @@ Point2D RainerMap::getRealXY(Coor c) {
   return p;
 }
 
+Coor RainerMap::getCellCoor(double px, double py, double th) {
+  double d;
+  Coor c;
+  
+  for(int i=0; i<xmax; i++) {
+    for (int j=0; j<ymax; j++) {
+      d = ArMath::distanceBetween(m[i][j].realCenter.x, m[i][j].realCenter.y, px, py);
+      if (d < th) {
+	c.x = i;
+	c.y = j;
+	return c;
+      }
+    }
+  }
+  c.x = NULL_COOR;
+  c.y = NULL_COOR;
+  return c;  
+}
+
+
 void RainerMap::mark(Coor c, State s) {
   m[c.x][c.y].state = s;
+}
+
+void RainerMap::markAs(State orig, State final) {
+  for (int i = 0; i < xmax; i++) {
+    for (int j = 0; j < ymax; j++) {
+      if (m[i][j].state == orig) {
+	m[i][j].state = final;
+      }
+    }
+  }
 }
 
 bool RainerMap::isClean() {
@@ -98,6 +162,7 @@ char RainerMap::charOf(int x, int y) {
 }
 
 void RainerMap::printMap() {
+  printf("\n");
   for (int y = ymax -1; y+1; y--) {
     printf("%d |", y);
     for (int x = 0; x < xmax; x++) {

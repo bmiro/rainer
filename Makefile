@@ -9,7 +9,7 @@ libtact:
 	g++ -c libtact.cpp -I/usr/local/Aria/include  -Wall
 
 librainermap:
-	g++ -c librainermap.cpp -Wall
+	g++ -c librainermap.cpp -I/usr/local/Aria/include -Wall
 
 libtrace:
 	g++ -c libtrace.cpp -Wall 
