@@ -4,12 +4,14 @@ En aquest apartat es mencionen possibles ampliacions de la practica actual. El f
 es perque així es demostra la flexibilitat de l'arquitectura implementada que alhora mostra el grau
 de comprensió adquirit.
 
-El fet de no implementar aquestes ampliacions es perque donada l'arquitectura de base es senzill però pot resultar
+El fet de no implementar aquestes ampliacions es perquè donada l'arquitectura de base es senzill però pot resultar
 rutinari i alhora costós en temps per els pocs coneixements diferents del que ja s'ha implementat que es demostren.
 
 Una primera millora seria implementar un viatgant de comerç per passar a fer la neteja de tots els punts.
-Per fer això simplement seria necessari implementar la funció que generes la ruta òptima, guardar-la en 
+Per fer això simplement seria necessari implementar la funció que generés la ruta òptima, guardar-la en 
 memòria i implementar un iterador perque cada crida de la funció getNextCell reconrés el punt on s'ha d'anar.
+Amb aquesta implementació s'evitarien recorregunts innecessaris sobre ce\lgem es ja netejades i el recorregut
+mínim per fer-ho.
 
 No s'ha implementat ja que el cost es NP complet i el fet de trobar un obstacle pot esgarrar facilment la ruta.
 
@@ -19,3 +21,13 @@ on ha d'anar el robot.
 
 Notem que com que la tasca de posicionar el robot al mapa i de mirar que s'ha netejat son una tasca apartat
 a l'atendre una emergencia també es considerarien nets els punts per on ha passat per atendre-la.
+
+Finalment també es podria treballar el fet de trobar llocs innaccessibles. Una opció per fer-ho
+es un cop iniciat el moviment a un punt guardar en un vector els punts per on es passa i quan passa
+cert llidar de temps mirar si la posició actual es un punt ja dins del vector, així podriem comprovar
+si esta movent-se de costat a costat intentant accedir a un lloc on no es possible.
+
+Finalment també seria interessant que la tasca que vigila el valors dels sensors escrivis a un mapa de bits
+les lectures fetes, així es tindria una imatge amb el mapa de la situació. Aquesta funcionalitat 
+en l'estat actual de la practica es molt senzilla de implementar, pero requereix tenir soltura emprant
+mapes de bits i generant imatges.
