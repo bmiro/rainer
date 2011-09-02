@@ -1,68 +1,81 @@
 \section{Modelització i implementació}
 
-Tal i com s'explica a l'enunciat podem distignir tres nivells en l'arquitectura: estrategic, tàctic i executiu.
+\subsection{Arquitectura}
+Tal i com s'explica a l'enunciat podem distingir tres nivells en l'arquitectura: estratègic, tàctic i executiu.
 
-El nivell executiu esta implementat en les llibreries de l'Aria, així doncs la nostra pràctica implementa
+El nivell executiu està implementat en les llibreries de l'\emph{Aria}, així doncs la nostra pràctica implementa
 els dos nivells superiors.
 
-El nivell que més atenció requereix es el tàctic ja que l'estratègic actua com a mer sequenciador
+El nivell que més atenció requereix és el tàctic ja que l'estratègic actua com a mer seqüenciador
 de funcions implementades en el tàctic.
 
-En el codi la llibreria de l'estratègic es anomenada librainer i la tàctica libtact.
+En el codi la llibreria de l'estratègic es anomenada \texttt{librainer} i la tàctica \texttt{libtact}.
 
 De manera transversal hi ha altres components com el mapa que el nivell tàctic omple amb les zones
-per on es va passat, així com a l'estratègic per obtenir els seguents punts on ordenar que vagi el robot.
-Dit component apareix al codi com una llibreria anomenada librainermap.
+per on es va passat, així com a l'estratègic per obtenir els següents punts on ordenar que vagi el robot.
+Dit component apareix al codi com una llibreria anomenada \texttt{librainermap}.
 
-També existeix una altre llibreria emprada transversalment que és lib2d, en aquesta s'han implementat
-dues estructures de dades i les seves operacions per tal de facilitar tota la feina als demes componets.
+També existeix una altra llibreria emprada transversalment que és \texttt{lib2d}, en aquesta s'han implementat
+dues estructures de dades i les seves operacions per tal de facilitar tota la feina als demés components.
 En aquesta llibreria hi trobam totes les operacions necessàries per operar amb punts i vectors bidimensionals
 com ara les operacions aritmètiques clàssiques, productes per un escalar, normalitzat etc.
 
-Finalment hi ha una llibreria no emprada al codi anomenada libtrace que pretenia identificar llocs
-innaccessibles envoltats per objectes pero finalment no s'ha acabat de implementar ja que s'ha considerat
+Finalment hi ha una llibreria no emprada al codi anomenada \texttt{libtrace} que pretenia identificar llocs
+inaccessibles envoltats per objectes però finalment no s'ha acabat de implementar ja que s'ha considerat
 fora de l'abast d'aquesta pràctica.
 
 DIAGRAMA CAPES LIBRAINER LIBTACT ETC
 
+COMENTAR IMPLEMENTACIÓ DE LES TASQUES
 
-En la implementació el més destacable es com es du a terme l'esquiva dels obstacles i com s'ha jugat amb
-els paràmetres per evitar que el robot es bloqueji o tardi massa temps en fer un recorregut. 
+
+\subsection{Implementació de la repulsió}
+
+En la implementació el més destacable és com es du a terme l'esquiva dels obstacles i com s'ha jugat amb
+els paràmetres per evitar que el robot és bloquegi o tardi massa temps en fer un recorregut. 
+
+El càlcul de cada un dels components és la implementació mencionada a l'enunciat, cada sensor que
+detecta l'obstacle a menys d'un determinat llindar genera un vector del punt on s'ha detectat l'obstacle
+al centre del robot. Aquests vectors són normalitzats, ponderats segons quin sigui el sensor i finalment
+sumats.
+
+Després és sumant ponderadament amb el vector d'atracció per tal d'obtenir la direcció resultant.
 
 En l'elaboració del vector de repulsió es tenen amb compte tots els sensors. En principi es podria pensar
-que basten els de davant ja que son els que detecten l'objecte, però es interessant posar els de darrera
+que basten els de davant ja que són els que detecten l'objecte, però es interessant posar els de darrera
 ja que en el moment que intenta fer l'esquiva els de davant perden la lectura mentre que els de darrera
-la guanyen i així s'afavoreix un distanciament més rapid i perpendicular de l'objecte. La ponderació
-de cada un dels vectors s'ha fet de manera experimental amb el simulador, es pot dir que els frontals
-tenen mes rellevància que els de darrera, i que les diagonals tenen també major ponderació ja que 
-s'ha observat que aixi s'esquiven millor els cantons prims com per exemple d'un triangle.
+la guanyen i així s'afavoreix un distanciament més ràpid i perpendicular de l'objecte. 
+
+La ponderació de cada un dels vectors s'ha fet de manera experimental amb el simulador, es pot dir
+que els frontals tenen més rellevància que els de darrera, i que les diagonals tenen també major
+ponderació ja que s'ha observat que així s'esquiven millor els cantons prims com per exemple d'un triangle.
 
 El problema de l'esquiva d'un obstacle pot ser que els vectors quedin igualats i el robot bloquejat
-o fent uns petits moviments ja que no te temps avançar perque a l'haver-se reoirentat no detecta l'obstacles
-i intenta  tornar al punt d'on venia perque es mes proper a l'objectiu. Per això s'implementa un temps de
-ceguera (blindTime) que el robot no mira els sensors i es mou en la direcció previament calculada.
-D'aquesta manera quan el robot s'apopa a un obstacle i la repulsió
-es suficient aquest es gira en sentit oposat i avança.
+o fent uns petits moviments ja que no te temps avançar perquè a l'haver-se re-orientat no detecta l'obstacle
+i intenta  tornar al punt d'on venia perquè és més proper a l'objectiu. Per això s'implementa un temps de
+ceguera (\emph{blindTime}) que el robot no mira els sensors i es mou en la direcció prèviament calculada.
+D'aquesta manera quan el robot s'apropa a un obstacle i la repulsió es suficient aquest es gira en sentit
+oposat i avança.
 
-Per altra banda es permet que el robot avanci mentre gira cosa que no sols agilitza el moviment sino que
-modfica la trajectoria del robot evitant que torni al mateix punt disminuint les possiblitats de bloqueig.
+Per altra banda es permet que el robot avanci mentre gira cosa que no sols agilitza el moviment sinó que
+modifica la trajectòria del robot evitant que torni al mateix punt disminuint les possibilitats de bloqueig.
 
 Cal esmentar que això no garanteix que es pugui esquivar qualsevol obstacle per arribar a un punt, 
-si l'obstacle es suficientment gran es possible que el robot vagi de banda a banda d'aquest de manera
-cíclica sense aconseguir superar-lo. En l'apartat d'ampliacions es comenta una possible so\lgem ució.
-
-En l'apartat seguent s'expliquen els paràmetres que governen aquest comportament, que son el temps
+si l'obstacle es suficientment gran és possible que el robot vagi de banda a banda d'aquest de manera
+cíclica sense aconseguir superar-lo. En l'apartat d'ampliacions es comenta una possible so\lgem ució. En
+l'apartat següent s'expliquen els paràmetres que governen aquest comportament, que són el temps
 de ceguesa i el llindar que considera que el robot ja esta orientat per poder moure's.
 
-La implementació del vagar es la típica de avançar fins a trobar un obstacle i un cop es te posar 
+\subsection{Implementació del vagar}
+
+La implementació del vagar consisteix en avançar fins a trobar un obstacle i un cop es té posar 
 la nova direcció del robot com el vector de repulsió generat per aquest obstacle.
 
-Finalment comentar que per tal de simplificar l'entorn es modelitza la zona a netejar com una retícula
+\subsection{Implementació de la zona de neteja}
+
+Finalment comentar que per tal de simplificar l'entorn és modelitza la zona a netejar com una retícula
 de ce\lgem d'igual dimensió caracteritzades per les coordenades del seu centre i l'estat en que es troben,
 si netes, brutes o son una zona ocupada per un obstacle.
-
-
-COMENTAR IMPLEMENTACIÓ DE LES TASQUES
 
 En la implementació trobam que el robot comença la neteja d'una zona, la ce\lgem a a netejar es simplement
 el resultat de fer un zig-zag per tota la zona, independentment si esta neta o no. Alhora hi ha dues tasques
@@ -72,7 +85,7 @@ no fa res més, aquest fet està comentat a l'apartat de possibles ampliacions.
 
 Els obstacles es marquen a nivell estratègic quan el nivell tàctic indica que no ha pogut arribar a aquell punt perque conicideix 
 amb un objecte. El fet de no fer-ho dins la tasca de mapeig es perque un obstacle pot ser suficientment petit
-com per representar un problema a l'aproximació desde un sol costat, així doncs si es fa a nivell de la funció
+com per representar un problema a l'aproximació des de un sol costat, així doncs si es fa a nivell de la funció
 anar a punt del tàctic aquesta l'intenta vorejar amb l'evitació d'obstacles, si es marques amb la simple deteció
 ja es consideraria una cela amb obstacle i s'aniria a la següent.
  
