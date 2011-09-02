@@ -1,0 +1,21 @@
+\section{Possibles ampliacions}
+
+En aquest apartat es mencionen possibles ampliacions de la practica actual. El fet de fer aquestes mencions
+es perque així es demostra la flexibilitat de l'arquitectura implementada que alhora mostra el grau
+de comprensió adquirit.
+
+El fet de no implementar aquestes ampliacions es perque donada l'arquitectura de base es senzill però pot resultar
+rutinari i alhora costós en temps per els pocs coneixements diferents del que ja s'ha implementat que es demostren.
+
+Una primera millora seria implementar un viatgant de comerç per passar a fer la neteja de tots els punts.
+Per fer això simplement seria necessari implementar la funció que generes la ruta òptima, guardar-la en 
+memòria i implementar un iterador perque cada crida de la funció getNextCell reconrés el punt on s'ha d'anar.
+
+No s'ha implementat ja que el cost es NP complet i el fet de trobar un obstacle pot esgarrar facilment la ruta.
+
+Per altra banda seria senzill implementar una espera d'events de teclat perque el robot atengui una urgència,
+simplement podria fer-se amb una tasca nova pendent d'events de teclat que sobreesriqui el valor del  punt
+on ha d'anar el robot.
+
+Notem que com que la tasca de posicionar el robot al mapa i de mirar que s'ha netejat son una tasca apartat
+a l'atendre una emergencia també es considerarien nets els punts per on ha passat per atendre-la.
