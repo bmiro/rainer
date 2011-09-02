@@ -326,8 +326,8 @@ bool TactRainer::goGoal(Point2D pnt, double obsRadius=100.0) {
       /* Miram si el punt on anam i l'obstacle detectat estan suficientment
          junts com per considerar el punt inaccessible */
       e = ArMath::distanceBetween(nearObstaclePoint.x, nearObstaclePoint.y, pnt.x, pnt.y);
-      f (e < obsRadius) {
-	return false;
+      if (e < obsRadius) {
+        return false;
       }
     }
     if (impactAlert) {
