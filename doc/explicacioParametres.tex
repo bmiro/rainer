@@ -2,22 +2,25 @@
 
 Tota la practica ve parametritzada per el fitxer config.cfg.
 
-Per tal d'entendre els paràmetres on a continuació s'expliquen.
+Per tal d'entendre els paràmetres, a continuació s'expliquen.
 
 \begin{description}
   \item[thHeading] És el llindar passat a la funció que orienta el robot el qual marca si ja es considera orientat.
-Aquest valor es emprat per fer les orientacions més precises quan no es vol que es mogui el robot mentre es fa el gir.
+Aquest valor és emprat per fer les orientacions més precises quan no es vol que
+es mogui el robot mentre es fa el gir.
   \item[thObsHeading] A l'igual que l'anterior però aquest cop el llindar és molt permissiu, permetent que el robot
 es consideri orientat i per tant segueixi avançant mentre acaba l'orientació. Sol emprar-se quan es fa l'esquiva
 d'un objecte per els motius explicats en la secció anterior.
-
-  \item[thOnPoint] És el llindar per considerar que el robot ja es troba al punt indicat, significa que la distància
-entre la posició actual del robot i punt de destí ha des ser menor a aquest llindar per considerar que ja s'ha arribat.
+  \item[thOnPoint] És el llindar per considerar que el robot ja es troba al punt
+indicat, significa que la distància
+entre la posició actual del robot i el punt de destí ha de ser menor a aquest
+llindar per considerar que ja s'ha arribat.
   \item[maxDist] Es la distància a la qual un objecte es considera obstacle i per tant s'inicia la repulsió.
   \item[impactDist] Distància a la qual un objecte es considera massa proper al robot i que per tant s'ha
 d'actuar de manera imminent per evitar una co\lgem isió sols tenint amb compte el vector de repulsió.
   \item[timeObstacledTh, distObstacledTh, elephantMem] Paràmetres per la llibreria \texttt{libtact} no acabada d'implementar.
-  \item[blindTime] Temps entre mesures dels sensors, durant aquest temps el robot segueix l'ultima direcció donada.
+  \item[blindTime] Temps entre mesures dels sensors. Durant aquest temps el
+robot segueix l'ultima direcció donada.
   \item[numSonar] Número total de sensors a tenir amb compte.
   \item[numFirstSonar] Posició del primer sensor.
   \item[numLastFrontSonar] Posició de l'últim sensor frontal.
@@ -27,7 +30,7 @@ d'actuar de manera imminent per evitar una co\lgem isió sols tenint amb compte 
   \item[slowVel] Velocitat lenta del robot per dur a terme accions o aproximacions perilloses.
   \item[normalVel] Velocitat normal del moviment del robot.
   \item[weightSonar\#] Ponderació de cada un dels sensors del robot.
-  \item[cellEdge] Dimenció de l'aresta de cada ce\lgem del mapa
+  \item[cellEdge] Dimenció de l'aresta de cada ce\lgem del mapa.
   \item[area\#size] Dimensions en ce\lgem es de l'area a netejar per el robot.
   \item[robot\#init] Ce\lgem a inicial on el robot està hubicat.
 \end{description}
