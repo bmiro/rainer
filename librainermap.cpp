@@ -1,6 +1,7 @@
 #include "librainermap.h"
 
-RainerMap::RainerMap (int sizex, int sizey, double cellEdge, int rcx, int rcy, double rpx, double rpy) {
+RainerMap::RainerMap (int sizex, int sizey, double cellEdge, int rcx, int rcy,
+                                                             double rpx, double rpy) {
   xmax = sizex; /* Recorda de 0 a 7! */  
   ymax = sizey;
   Coor c;
@@ -73,7 +74,8 @@ Coor RainerMap::getNextPos(State s, double x, double y) {
     nearCell.y = NULL_COOR;
   }
   
-  printf("Estic a %d %d i el lloc mes proper es %d %d\n", robotCell.x, robotCell.y, nearCell.x, nearCell.y);
+  printf("Estic a %d %d i el lloc mes proper es %d %d\n",
+         robotCell.x, robotCell.y, nearCell.x, nearCell.y);
   
   return nearCell;
  

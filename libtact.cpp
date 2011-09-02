@@ -171,7 +171,8 @@ Vect2D TactRainer::obstacleRepulsion(double th, double th_dmin,
       if (obstacle != NULL) {
 	*obstacle = true;
       }
-      vObs[i].setXY(sensor->getX() - sensor->getXTaken(), sensor->getY() - sensor->getYTaken());
+      vObs[i].setXY(sensor->getX() - sensor->getXTaken(),
+                    sensor->getY() - sensor->getYTaken());
       vObs[i] *= -1;
       mod_vObs[i] = CALC_MOD_VOBS(maxDist, di);
        /* Convertim el vector en un que tingui el mòdul (maxdist - di)/ maxdist */
@@ -318,14 +319,15 @@ bool TactRainer::goGoal(Point2D pnt, double obsRadius=100.0) {
     d = ArMath::distanceBetween(ar.getX(), ar.getY(), pnt.x, pnt.y);
     
     va = goalAttraction(pnt);
-    vro = obstacleRepulsion(maxDist, impactDist, &obstacle, &impactAlert, &nearObstaclePoint);
+    vro = obstacleRepulsion(maxDist, impactDist, &obstacle,
+                           &impactAlert, &nearObstaclePoint);
         
     if (obstacle) {
       /* Miram si el punt on anam i l'obstacle detectat estan suficientment
-	junts com per considerar el punt inaccessible */
+         junts com per considerar el punt inaccessible */
       e = ArMath::distanceBetween(nearObstaclePoint.x, nearObstaclePoint.y, pnt.x, pnt.y);
       if (e < obsRadius) {
-	return false;
+        return false;
       }
     }
     if (impactAlert) {

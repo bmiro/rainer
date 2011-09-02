@@ -88,7 +88,8 @@ public:
   
   Vect2D goalAttraction(Point2D goal);
   Vect2D obstacleRepulsion(double th, double th_dmin,
-				     bool *obstacle, bool *impactAlert, Point2D *nearObstaclePoint);
+				           bool *obstacle, bool *impactAlert,
+                           Point2D *nearObstaclePoint);
   
   int findObject(double vel, double th);
   void wander();

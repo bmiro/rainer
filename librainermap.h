@@ -35,7 +35,8 @@ private:
   char charOf(int x, int y);
     
 public:
-  RainerMap(int sizex=8, int sizey=8, double cellEdge=500, int rcx=0, int rcy=0, double rpx=0.0, double rpy=0.0);
+  RainerMap(int sizex=8, int sizey=8, double cellEdge=500, int rcx=0, int rcy=0,
+                                                           double rpx=0.0, double rpy=0.0);
     
   void setRobotPos(Coor c);
   
