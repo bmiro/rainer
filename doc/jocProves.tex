@@ -2,3 +2,28 @@
 
 Per tal de provar la pràctica s'han realitzat una sèrie de jocs de proves
 descrits a continuació.
+
+El primer es simple, passar per quatre punts sense cap obstacle. Amb aquest simplement es comprova que es calculi
+bé el vector d'atracció, també es pot observar si el heading es fa de manera adequada.
+
+En segon lloc tenim passar per quatra punts pero amb un obstacle enmig, en aquest es veu si l'esquiva d'obstacles
+es fa bé. A més l'obstacle esta colocat de tal manera que el robot es troba impactant una linia de 45 graus
+amb el punt destí a la perpendicular, de tal manera que seria una situació delicada on quedar-se estancat.
+
+A continuació trobam el mateix obstacle però aquest cop situat sobre el punt de destí, en aquest cas
+el robot ha de detectar que no pot arribar-hi ja que l'obstacle i el punt de destí es tan per davall d'un cert
+llindar. Fins que no s'assoleix aquest llindar es veu com el robot intenta fer aproximacions al punt desde
+diferents direccions.
+
+Per tal de provar el vagar tenim un mapa tancat amb diversos obstacles on el robot va rebotant.
+Por arribar un punt en que el robot entri en un cicle ja que els angles de rebot poden fer que així
+coincideixi. El que no es permet es que el robot toqui un obstacle o es quedi imòbil sols girant sobre
+ell mateix sense ser capaç de emprendre la ruta cap a una altra banda.
+
+A continuació tenim les proves de la neteja de zona, la primera sense obstacles per veure el recorregut.
+
+I finalment el recorregut amb obstacles on el robot els esquiva (i marca terreny durant aquesta esquiva)
+i com finalment torna a les zones d'obstacle per comprovar que no vos un obstàcle mòbil i ara si que
+pot netejar la zona. En aquest últim no podem simular obstacles mòbils però si veure com torna a intentar
+anar a la zona obstaculitzada.
+
