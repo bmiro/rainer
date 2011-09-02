@@ -24,10 +24,13 @@ Finalment hi ha una llibreria no emprada al codi anomenada \texttt{libtrace} que
 inaccessibles envoltats per objectes però finalment no s'ha acabat de implementar ja que s'ha considerat
 fora de l'abast d'aquesta pràctica.
 
+
 DIAGRAMA CAPES LIBRAINER LIBTACT ETC
 
-COMENTAR IMPLEMENTACIÓ DE LES TASQUES
-
+Així doncs en el nivell tàctic tenim les funcions per anar a un punt (i funcions auxiliars per el càlcul
+de vectors) i la funció de vagar. Al mateix nivell s'executen dues tasques en para\lgem el una per
+enregistrar els punts dels objectes trobats i una altre per enregistrar en tot moment la posició del 
+robot i les zones per on ha passat marcant-les com a netes.
 
 \subsection{Implementació de la repulsió}
 
@@ -79,13 +82,18 @@ si netes, brutes o son una zona ocupada per un obstacle.
 
 En la implementació trobam que el robot comença la neteja d'una zona, la ce\lgem a a netejar es simplement
 el resultat de fer un zig-zag per tota la zona, independentment si esta neta o no. Alhora hi ha dues tasques
-iniciades que van registrat per on ha passat el robot i per tant consideren que s'ha netejat la zona i una altre
-que observa els valors dels sensors per la detecció d'obstacles. Cal dir que aquesta segona sols mira els sensors,
+iniciades que van registrat per on ha passat el robot i per tant consideren que s'ha netejat la zona, l'altra
+observa els valors dels sensors per la detecció d'obstacles. Cal dir que aquesta segona sols mira els sensors,
 no fa res més, aquest fet està comentat a l'apartat de possibles ampliacions.
 
-Els obstacles es marquen a nivell estratègic quan el nivell tàctic indica que no ha pogut arribar a aquell punt perque conicideix 
-amb un objecte. El fet de no fer-ho dins la tasca de mapeig es perque un obstacle pot ser suficientment petit
-com per representar un problema a l'aproximació des de un sol costat, així doncs si es fa a nivell de la funció
-anar a punt del tàctic aquesta l'intenta vorejar amb l'evitació d'obstacles, si es marques amb la simple deteció
-ja es consideraria una cela amb obstacle i s'aniria a la següent.
+Els obstacles es marquen a nivell estratègic quan el nivell tàctic indica que no ha pogut arribar a aquell
+punt perquè coincideix amb un objecte. El fet de no fer-ho dins la tasca de mapeig es perquè un obstacle
+pot ser suficientment petit com per representar un problema a l'aproximació des de un sol costat, així doncs
+si es fa a nivell de la funció anar a punt del tàctic aquesta l'intenta vorejar amb l'evitació d'obstacles, si
+es marques amb la simple detecció ja es consideraria una cela amb obstacle i s'aniria a la següent.
+
+Un cop s'ha fet tot el zig-zag es marquen els obstacles com ce\lgem brutes \cite{neteja} i és cerca la més
+propera al robot, aquest intenta accedir-hi i determina si l'ha netejat o es definitivament un
+obstacle\cite{netejaobs}. Tot seguit cerca el següent punt més proper per dur a terme el mateix proces fins a donar per verificats tots els punts.
+
  
